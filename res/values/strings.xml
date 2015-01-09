@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Remote Keyboard and Mouse</string>
+    <string name="pref_file_name">io.github.zkhan93.remotekeyboardandmouse.preferencefile</string>
+    <string name="pref_server_ip">server_ip</string>
+    <string name="action_settings">Settings</string>
+
+</resources>

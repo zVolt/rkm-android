@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text|textNoSuggestions|textMultiLine"
-        android:lines="2"
+        android:maxLines="2"
         android:text="_"
         android:focusable="true"
         android:ems="10" >

@@ -38,7 +38,8 @@ public class MainFragment extends Fragment {
 	void sendKey(String cmd) {
 		try {
 			if (MainActivity.put != null)
-				MainActivity.put.println(0 + ":" + cmd);
+				MainActivity.put
+						.println(Constants.ZERO + Constants.COLON + cmd);
 			else
 				MainActivity.connected = false;
 		} catch (Exception e) {

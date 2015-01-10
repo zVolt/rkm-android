@@ -8,18 +8,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MotionEventCompat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	static MainFragment mf;
 	static float x1, y1, x2, y2;
+	int dx, dy;
 	static Socket s;
 	static PrintWriter put;
 	static boolean connected;
+	boolean click;
+	int drag_threshold = 2;
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
 
 	@Override
@@ -61,26 +64,37 @@ public class MainActivity extends Activity {
 		case (MotionEvent.ACTION_DOWN):
 			x1 = event.getX();
 			y1 = event.getY();
-			Log.d(TAG, "Action was DOWN: " + x1 + "," + y1);
+			click = true;
+			// Log.d(TAG, "Action was DOWN: " + x1 + "," + y1);
 			return true;
 		case (MotionEvent.ACTION_MOVE):
 			x2 = event.getX();
 			y2 = event.getY();
-			// Log.d(TAG, "Action was MOVE: " + (int) (x2 - x1) + ","
-			// + (int) (y2 - y1));
-			sendMove((int) (x2 - x1), (int) (y2 - y1));
-			x1 = x2;
-			y1 = y2;
+			dx = (int) (x2 - x1);
+			dy = (int) (y2 - y1);
+			// Log.d(TAG, "Action was MOVE: " + dx + "," + dy);
+			if (click && Math.abs(dx) > drag_threshold
+					|| Math.abs(dy) > drag_threshold)
+				click = false;
+			if (!click) {
+				sendMove((int) (x2 - x1), (int) (y2 - y1));
+				x1 = x2;
+				y1 = y2;
+			}
 			return true;
 		case (MotionEvent.ACTION_UP):
-			Log.d(TAG, "Action was UP");
+			// Log.d(TAG, "Action was UP: " + x2 + "," + y2);
+			if (click) {
+				// Log.d(TAG, "Action was click");
+				sendClick(1);
+			}
 			return true;
 		case (MotionEvent.ACTION_CANCEL):
-			Log.d(TAG, "Action was CANCEL");
+			// Log.d(TAG, "Action was CANCEL");
 			return true;
 		case (MotionEvent.ACTION_OUTSIDE):
-			Log.d(TAG, "Movement occurred outside bounds "
-					+ "of current screen element");
+			// Log.d(TAG, "Movement occurred outside bounds "
+			// + "of current screen element");
 			return true;
 		default:
 			return super.onTouchEvent(event);
@@ -90,10 +104,33 @@ public class MainActivity extends Activity {
 	void sendMove(int x, int y) {
 		try {
 			if (put != null)
-				put.println("1:0:" + x + ":" + y);
+				put.println(Constants.ONE + Constants.COLON + Constants.ZERO
+						+ Constants.COLON + x + Constants.COLON + y);
 		} catch (Exception e) {
 			// reconnect server
 		}
+	}
+
+	void sendClick(int button) {
+		try {
+			if (put != null)
+				put.println(Constants.ONE + Constants.COLON + Constants.ONE
+						+ Constants.COLON + String.valueOf(button));
+		} catch (Exception e) {
+			// reconnect server
+		}
+	}
+
+	public void leftClick(View view) {
+		sendClick(1);
+	}
+
+	public void midClick(View view) {
+		sendClick(2);
+	}
+
+	public void rightClick(View view) {
+		sendClick(3);
 	}
 
 	public static class SetNw extends AsyncTask<String, Void, Boolean> {
@@ -125,11 +162,11 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
-				Toast.makeText(cont, "connected to server", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(cont, cont.getString(R.string.sever_connected),
+						Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(cont,
-						"uanble to connect! check server IP in setting",
+						cont.getString(R.string.sever_not_connected),
 						Toast.LENGTH_SHORT).show();
 			}
 			super.onPostExecute(result);

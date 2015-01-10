@@ -2,22 +2,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.zkhan93.remotekeyboardandmouse.MainFragment" >
+    android:orientation="vertical" >
 
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ems="10"
+        android:focusable="true"
         android:inputType="text|textNoSuggestions|textMultiLine"
         android:maxLines="2"
-        android:text="_"
-        android:focusable="true"
-        android:ems="10" >
+        android:text="@string/edit_text_empty" >
+
         <requestFocus />
     </EditText>
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonmouseleft"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:onClick="leftClick"
+            android:text="@string/mouse_click_left" />
+
+        <Button
+            android:id="@+id/buttonmousemiddle"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="midClick"
+            android:text="@string/mouse_click_middle" />
+
+        <Button
+            android:id="@+id/buttonmouseright"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:onClick="rightClick"
+            android:text="@string/mouse_click_right" />
+    </LinearLayout>
 
 </LinearLayout>

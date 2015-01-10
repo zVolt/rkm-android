@@ -25,15 +25,15 @@ public class MyTextWatcher implements TextWatcher {
 		switch (s.length()) {
 		case 0:
 			// delete pressed
-			s.append("_");
+			s.append(Constants.UNDERSCORE);
 			ch = 8;
-			mf.sendKey(ch + ""); // yes we are on main thread :P
+			mf.sendKey(String.valueOf(ch)); // yes we are on main thread :P
 			break;
 		case 2:
 			// a key pressed
 			ch = (int) s.charAt(1);
 			s.replace(1, s.length(), "", 0, 0);
-			mf.sendKey(ch + ""); // yes we are on main thread :P
+			mf.sendKey(String.valueOf(ch)); // yes we are on main thread :P
 			break;
 		case 1:
 			break;

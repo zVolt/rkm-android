@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
 	static Socket s;
 	static PrintWriter put;
 	static boolean connected;
-	boolean click;
+	boolean click, scroll;
 	int drag_threshold = 2;
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
 
@@ -61,10 +61,18 @@ public class MainActivity extends Activity {
 
 		int action = MotionEventCompat.getActionMasked(event);
 		switch (action) {
+		case (MotionEvent.ACTION_POINTER_DOWN):
+			scroll = true;
+			click = false;
+			// Log.d(TAG, "scorrling start");
+			return true;
+
 		case (MotionEvent.ACTION_DOWN):
 			x1 = event.getX();
 			y1 = event.getY();
 			click = true;
+			scroll = false;
+			// Log.d(TAG, "click action");
 			// Log.d(TAG, "Action was DOWN: " + x1 + "," + y1);
 			return true;
 		case (MotionEvent.ACTION_MOVE):
@@ -73,14 +81,20 @@ public class MainActivity extends Activity {
 			dx = (int) (x2 - x1);
 			dy = (int) (y2 - y1);
 			// Log.d(TAG, "Action was MOVE: " + dx + "," + dy);
-			if (click && Math.abs(dx) > drag_threshold
-					|| Math.abs(dy) > drag_threshold)
+			if (scroll) {
+				if (Math.abs(dy) > 3) {
+					sendScroll(dy > 0);
+					// Log.d(TAG, "Sending scroll");
+				}
+			} else if (click
+					&& (Math.abs(dx) > drag_threshold || Math.abs(dy) > drag_threshold)) {
 				click = false;
-			if (!click) {
-				sendMove((int) (x2 - x1), (int) (y2 - y1));
-				x1 = x2;
-				y1 = y2;
 			}
+			if (!click && !scroll) {
+				sendMove((int) (x2 - x1), (int) (y2 - y1));
+			}
+			x1 = x2;
+			y1 = y2;
 			return true;
 		case (MotionEvent.ACTION_UP):
 			// Log.d(TAG, "Action was UP: " + x2 + "," + y2);
@@ -111,6 +125,16 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	void sendScroll(boolean up) {
+		try {
+			if (put != null)
+				put.println(Constants.ONE + Constants.COLON + Constants.ONE
+						+ Constants.COLON + String.valueOf(up ? 4 : 5));
+		} catch (Exception e) {
+			// reconnect server
+		}
+	}
+
 	void sendClick(int button) {
 		try {
 			if (put != null)
@@ -123,10 +147,6 @@ public class MainActivity extends Activity {
 
 	public void leftClick(View view) {
 		sendClick(1);
-	}
-
-	public void midClick(View view) {
-		sendClick(2);
 	}
 
 	public void rightClick(View view) {

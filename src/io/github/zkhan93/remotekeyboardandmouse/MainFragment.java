@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 public class MainFragment extends Fragment {
 	EditText edt;
+	static boolean setup = false;
 
 	public MainFragment() {
 
@@ -28,10 +29,14 @@ public class MainFragment extends Fragment {
 	public void onStart() {
 		edt = (EditText) getActivity().findViewById(R.id.editText);
 		edt.addTextChangedListener(new MyTextWatcher(this));
-		new SetNw(getActivity()).execute(getActivity().getSharedPreferences(
-				getString(R.string.pref_file_name), Context.MODE_PRIVATE)
-				.getString(getString(R.string.pref_server_ip),
-						Constants.SERVER_IP));
+		if (!setup) {
+			new SetNw(getActivity()).execute(getActivity()
+					.getSharedPreferences(getString(R.string.pref_file_name),
+							Context.MODE_PRIVATE).getString(
+							getString(R.string.pref_server_ip),
+							Constants.SERVER_IP));
+			setup = true;
+		}
 		super.onStart();
 	}
 

@@ -12,7 +12,8 @@
         android:focusable="true"
         android:inputType="text|textNoSuggestions|textMultiLine"
         android:maxLines="2"
-        android:text="@string/edit_text_empty" >
+        android:text="@string/edit_text_empty"
+        android:textIsSelectable="false" >
 
         <requestFocus />
     </EditText>
@@ -32,27 +33,18 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
+            android:layout_weight="0.5"
             android:onClick="leftClick"
-            android:text="@string/mouse_click_left" />
-
-        <Button
-            android:id="@+id/buttonmousemiddle"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:onClick="midClick"
-            android:text="@string/mouse_click_middle" />
+            android:text="@null" />
 
         <Button
             android:id="@+id/buttonmouseright"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
+            android:layout_weight="0.5"
             android:onClick="rightClick"
-            android:text="@string/mouse_click_right" />
+            android:text="@null" />
     </LinearLayout>
 
 </LinearLayout>

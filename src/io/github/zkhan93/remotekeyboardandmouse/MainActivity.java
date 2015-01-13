@@ -7,22 +7,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	static MainFragment mf;
-	static float x1, y1, x2, y2;
+	static int x1, y1, x2, y2;
 	int dx, dy;
+	long stime, dtime;
 	static Socket s;
 	static PrintWriter put;
 	static boolean connected;
-	boolean click, scroll;
-	int drag_threshold = 2;
+	boolean click, scroll, click_hold, move, moved, clicked, prevent_jump,
+			hold_active; // actions
+	int drag_threshold = 2, hold_threshold = 120;
+	VelocityTracker vtracker;
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
 
 	@Override
@@ -55,56 +59,131 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 
-		int action = MotionEventCompat.getActionMasked(event);
-		switch (action) {
+		switch (event.getActionMasked()) {
 		case (MotionEvent.ACTION_POINTER_DOWN):
 			scroll = true;
+			click_hold = false;
 			click = false;
+			move = false;
+
 			// Log.d(TAG, "scorrling start");
 			return true;
-
-		case (MotionEvent.ACTION_DOWN):
-			x1 = event.getX();
-			y1 = event.getY();
-			click = true;
+		case (MotionEvent.ACTION_POINTER_UP):
 			scroll = false;
+			move = prevent_jump = true;
+			click_hold = false;
+			return true;
+		case (MotionEvent.ACTION_DOWN):
+			x1 = Math.round(event.getRawX());
+			y1 = Math.round(event.getRawY());
+			stime = System.currentTimeMillis();
+			prevent_jump = false;
+			click_hold = false;
+			click = false;
+			move = false;
+			scroll = false;
+			moved = false;
+			if (vtracker == null)
+				vtracker = VelocityTracker.obtain();
+			else
+				vtracker.clear();
 			// Log.d(TAG, "click action");
 			// Log.d(TAG, "Action was DOWN: " + x1 + "," + y1);
 			return true;
 		case (MotionEvent.ACTION_MOVE):
-			x2 = event.getX();
-			y2 = event.getY();
-			dx = (int) (x2 - x1);
-			dy = (int) (y2 - y1);
-			// Log.d(TAG, "Action was MOVE: " + dx + "," + dy);
-			if (scroll) {
-				if (Math.abs(dy) > 3) {
-					sendScroll(dy > 0);
-					// Log.d(TAG, "Sending scroll");
+			vtracker.addMovement(event);
+			vtracker.computeCurrentVelocity(100);
+			x2 = Math.round(event.getRawX());
+			y2 = Math.round(event.getRawY());
+			dx = x2 - x1;
+			dy = y2 - y1;
+			dtime = System.currentTimeMillis() - stime;
+			moved = Math.abs(dx) > drag_threshold
+					|| Math.abs(dy) > drag_threshold;
+
+			if (!scroll && !click_hold && !move) {
+				// scroll
+				/**
+				 * pointer count=2 movement
+				 */
+				if (event.getPointerCount() == 2 && moved) {
+					Log.d(TAG, "scrolling selected ");
+					scroll = true;
 				}
-			} else if (click
-					&& (Math.abs(dx) > drag_threshold || Math.abs(dy) > drag_threshold)) {
-				click = false;
+				// move
+				/**
+				 * pointer count =1 movement
+				 */
+				if (event.getPointerCount() == 1 && moved) {
+					Log.d(TAG, "moving selected");
+					move = true;
+
+				}
+				// click hold
+				/**
+				 * p[ointer count=1 no movement hold for some time
+				 */
+				if (event.getPointerCount() == 1 && !moved
+						&& dtime > hold_threshold) {
+					click_hold = true;
+					move = true;
+					Log.d(TAG, "holding selected");
+					// click down
+				}
 			}
-			if (!click && !scroll) {
-				sendMove((int) (x2 - x1), (int) (y2 - y1));
+			if (scroll) {
+				if (Math.abs(dy) > 3)
+					sendScroll(dy > 0);
+			} else if (click_hold) {
+				if (!clicked) {
+					sendClick(6);
+					clicked = true;
+					Log.d(TAG, "holding");
+				}
+
 			}
+			if (move) {
+				if ((Math.abs(dx) > 2 || Math.abs(dy) > 2) && !prevent_jump)
+					sendMove(dx, dy, vtracker.getXVelocity(),
+							vtracker.getYVelocity());
+				if (prevent_jump)
+					prevent_jump = false;
+			}
+
+			
 			x1 = x2;
 			y1 = y2;
 			return true;
 		case (MotionEvent.ACTION_UP):
 			// Log.d(TAG, "Action was UP: " + x2 + "," + y2);
-			if (click) {
-				// Log.d(TAG, "Action was click");
-				sendClick(1);
+			dtime = System.currentTimeMillis() - stime;
+			// click
+			/**
+			 * pointer=1
+			 *  no movement
+			 */
+			if (event.getPointerCount() == 1 && !moved) {
+				if (dtime < hold_threshold) {
+					// Log.d(TAG, "Action was click");
+					sendClick(1);
+					Log.d(TAG, "click");
+				} else {
+					if (clicked) {
+						sendClick(7);
+						Log.d(TAG, "hold done");
+						clicked = false;
+					}
+				}
 			}
+			move = scroll = click_hold = false;
 			return true;
 		case (MotionEvent.ACTION_CANCEL):
-			// Log.d(TAG, "Action was CANCEL");
+			Log.d(TAG, "Action was CANCEL");
+			vtracker.recycle();
 			return true;
 		case (MotionEvent.ACTION_OUTSIDE):
 			// Log.d(TAG, "Movement occurred outside bounds "
@@ -114,12 +193,19 @@ public class MainActivity extends Activity {
 			return super.onTouchEvent(event);
 		}
 	}
-
-	void sendMove(int x, int y) {
+/**
+ * 
+ * @param x - pixels to move in X-Direction
+ * @param y - pixels to move in Y-Direction
+ * @param vx - velocity in X-direction
+ * @param vy - velocity in Y-direction
+ */
+	void sendMove(int x, int y, float vx, float vy) {
 		try {
 			if (put != null)
 				put.println(Constants.ONE + Constants.COLON + Constants.ZERO
-						+ Constants.COLON + x + Constants.COLON + y);
+						+ Constants.COLON + x + Constants.COLON + y
+						+ Constants.COLON + vx + Constants.COLON + vy);
 		} catch (Exception e) {
 			// reconnect server
 		}

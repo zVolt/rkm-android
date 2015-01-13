@@ -2,11 +2,12 @@ package io.github.zkhan93.remotekeyboardandmouse;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 
 public class MyTextWatcher implements TextWatcher {
 	MainFragment mf;
 	int ch;
-
+	public static String TAG="io.github.zkhan93.remotekeyboardandmouse.MyTextWatcher";
 	public MyTextWatcher(MainFragment f) {
 		mf = f;
 	}
@@ -32,6 +33,7 @@ public class MyTextWatcher implements TextWatcher {
 		case 2:
 			// a key pressed
 			ch = (int) s.charAt(1);
+			Log.d(TAG, ch+","+(char)ch);
 			s.replace(1, s.length(), "", 0, 0);
 			mf.sendKey(String.valueOf(ch)); // yes we are on main thread :P
 			break;

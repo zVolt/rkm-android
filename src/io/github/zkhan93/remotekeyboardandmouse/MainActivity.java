@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -28,6 +29,8 @@ public class MainActivity extends Activity {
 	int drag_threshold = 2, hold_threshold = 120;
 	VelocityTracker vtracker;
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
+	TableLayout specialButtons;
+	boolean sbutton_visible;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 
@@ -154,7 +157,6 @@ public class MainActivity extends Activity {
 					prevent_jump = false;
 			}
 
-			
 			x1 = x2;
 			y1 = y2;
 			return true;
@@ -163,8 +165,7 @@ public class MainActivity extends Activity {
 			dtime = System.currentTimeMillis() - stime;
 			// click
 			/**
-			 * pointer=1
-			 *  no movement
+			 * pointer=1 no movement
 			 */
 			if (event.getPointerCount() == 1 && !moved) {
 				if (dtime < hold_threshold) {
@@ -193,13 +194,18 @@ public class MainActivity extends Activity {
 			return super.onTouchEvent(event);
 		}
 	}
-/**
- * 
- * @param x - pixels to move in X-Direction
- * @param y - pixels to move in Y-Direction
- * @param vx - velocity in X-direction
- * @param vy - velocity in Y-direction
- */
+
+	/**
+	 * 
+	 * @param x
+	 *            - pixels to move in X-Direction
+	 * @param y
+	 *            - pixels to move in Y-Direction
+	 * @param vx
+	 *            - velocity in X-direction
+	 * @param vy
+	 *            - velocity in Y-direction
+	 */
 	void sendMove(int x, int y, float vx, float vy) {
 		try {
 			if (put != null)
@@ -231,12 +237,69 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void showSpecialButtons(View view) {
+		if (specialButtons != null) {
+			if (sbutton_visible)
+				specialButtons.setVisibility(View.GONE);
+			else
+				specialButtons.setVisibility(View.VISIBLE);
+			sbutton_visible = !sbutton_visible;
+		}
+	}
+
 	public void leftClick(View view) {
 		sendClick(1);
 	}
 
 	public void rightClick(View view) {
 		sendClick(3);
+	}
+
+	public void specialKey(View view) {
+		int scode = 0;
+		switch (view.getId()) {
+		case R.id.buttonspecial11:
+			scode = 1;
+			break;
+		case R.id.buttonspecial12:
+			scode = 2;
+			break;
+		case R.id.buttonspecial13:
+			scode = 3;
+			break;
+		case R.id.buttonspecial14:
+			scode = 4;
+			break;
+		case R.id.buttonspecial21:
+			scode = 5;
+			break;
+		case R.id.buttonspecial22:
+			scode = 6;
+			break;
+		case R.id.buttonspecial23:
+			scode = 7;
+			break;
+		case R.id.buttonspecial24:
+			scode = 8;
+			break;
+		case R.id.buttonspecial15:
+			scode = 9;
+			break;
+		case R.id.buttonspecial16:
+			scode = 10;
+			break;
+		case R.id.buttonspecial25:
+			scode = 11;
+			break;
+		case R.id.buttonspecial26:
+			scode = 12;
+			break;
+
+		}
+		if (put != null) {
+			put.println(Constants.ZERO + Constants.COLON + Constants.ONE
+					+ Constants.COLON + scode);
+		}
 	}
 
 	public static class SetNw extends AsyncTask<String, Void, Boolean> {

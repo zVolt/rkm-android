@@ -6,9 +6,9 @@
     <string name="pref_server_ip">server_ip</string>
     <string name="action_settings">Settings</string>
     
-    <string name="mouse_click_left"> </string>
+    <string name="mouse_click_left">Left</string>
     <string name="mouse_click_middle"> </string>
-    <string name="mouse_click_right"> </string>
+    <string name="mouse_click_right">Right</string>
     
     <string name="edit_text_empty">_</string>
     

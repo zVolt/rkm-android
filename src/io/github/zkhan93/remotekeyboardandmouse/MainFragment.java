@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TableLayout;
 
 public class MainFragment extends Fragment {
 	EditText edt;
@@ -29,6 +30,13 @@ public class MainFragment extends Fragment {
 	public void onStart() {
 		edt = (EditText) getActivity().findViewById(R.id.editText);
 		edt.addTextChangedListener(new MyTextWatcher(this));
+		if (((MainActivity) getActivity()).specialButtons == null)
+			((MainActivity) getActivity()).specialButtons = (TableLayout) getActivity()
+					.findViewById(R.id.SpecialButtons);
+
+		((MainActivity) getActivity()).specialButtons
+				.setVisibility(((MainActivity) getActivity()).sbutton_visible ? View.VISIBLE
+						: View.GONE);
 		if (!setup) {
 			new SetNw(getActivity()).execute(getActivity()
 					.getSharedPreferences(getString(R.string.pref_file_name),
@@ -43,8 +51,8 @@ public class MainFragment extends Fragment {
 	void sendKey(String cmd) {
 		try {
 			if (MainActivity.put != null)
-				MainActivity.put
-						.println(Constants.ZERO + Constants.COLON + cmd);
+				MainActivity.put.println(Constants.ZERO + Constants.COLON
+						+ Constants.ZERO + Constants.COLON + cmd);
 			else
 				MainActivity.connected = false;
 		} catch (Exception e) {

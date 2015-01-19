@@ -16,8 +16,9 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+
 public class MainActivity extends Activity {
-	static MainFragment mf;
+	MainFragment mf;
 	static int x1, y1, x2, y2;
 	int dx, dy;
 	long stime, dtime;
@@ -26,12 +27,12 @@ public class MainActivity extends Activity {
 	static boolean connected;
 	boolean click, scroll, click_hold, move, moved, clicked, prevent_jump,
 			hold_active; // actions
-	int drag_threshold = 2, hold_threshold = 120;
+	int drag_threshold = 1, hold_threshold = 120;
 	VelocityTracker vtracker;
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
 	TableLayout specialButtons;
 	boolean sbutton_visible;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -150,7 +151,7 @@ public class MainActivity extends Activity {
 
 			}
 			if (move) {
-				if ((Math.abs(dx) > 2 || Math.abs(dy) > 2) && !prevent_jump)
+				if (!prevent_jump)
 					sendMove(dx, dy, vtracker.getXVelocity(),
 							vtracker.getYVelocity());
 				if (prevent_jump)

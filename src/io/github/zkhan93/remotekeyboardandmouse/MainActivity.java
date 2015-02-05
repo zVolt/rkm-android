@@ -3,10 +3,11 @@ package io.github.zkhan93.remotekeyboardandmouse;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 	MainFragment mf;
 	static int x1, y1, x2, y2;
 	int dx, dy;
@@ -32,7 +33,7 @@ public class MainActivity extends Activity {
 	static String TAG = "io.github.zkhan93.remotekeyboardandmouse.MainActivity";
 	TableLayout specialButtons;
 	boolean sbutton_visible;
-	
+	Toolbar toolbar;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,7 +43,10 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction().replace(R.id.container, mf)
 					.commit();
 		}
-
+	//	toolbar =(Toolbar)findViewById(R.id.toolbar);
+	//	 setSupportActionBar(toolbar);
+	//	 toolbar.setTitle(R.string.app_name);
+		 
 	}
 
 	@Override
@@ -74,7 +78,7 @@ public class MainActivity extends Activity {
 			click = false;
 			move = false;
 
-			// Log.d(TAG, "scorrling start");
+			// Log.d(TAG, "scrolling start");
 			return true;
 		case (MotionEvent.ACTION_POINTER_UP):
 			scroll = false;

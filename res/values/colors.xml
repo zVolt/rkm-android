@@ -24,4 +24,6 @@
     <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="fbutton_color_transparent">@android:color/transparent</color>
 
+    <color name="primary_color">#F44336</color>
+    <color name="secondary_color">#D32F2F</color>
 </resources>

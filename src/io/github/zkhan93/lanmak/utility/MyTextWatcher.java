@@ -1,5 +1,6 @@
-package io.github.zkhan93.remotekeyboardandmouse;
+package io.github.zkhan93.lanmak.utility;
 
+import io.github.zkhan93.lanmak.MainFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;

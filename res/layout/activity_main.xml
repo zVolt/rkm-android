@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        tools:context="io.github.zkhan93.remotekeyboardandmouse.MainActivity"
+        tools:context="io.github.zkhan93.lanmak.MainActivity"
         tools:ignore="MergeRootFrame" >
     </FrameLayout>
 

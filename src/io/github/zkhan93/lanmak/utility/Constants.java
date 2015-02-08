@@ -1,6 +1,6 @@
-package io.github.zkhan93.remotekeyboardandmouse;
+package io.github.zkhan93.lanmak.utility;
 
-public final class Constants {
+public interface Constants {
 	static int PORT = 5556;
 	static String SERVER_IP = "192.168.0.100";
 	static String COLON=":";

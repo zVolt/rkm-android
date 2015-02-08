@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/secondary_color"
+    android:background="@color/primary_color"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -14,34 +14,37 @@
         <EditText
             android:id="@+id/editText"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:background="@null"
             android:cursorVisible="false"
             android:ems="10"
             android:focusable="true"
             android:inputType="text|textNoSuggestions|textMultiLine"
             android:maxLines="2"
+            android:paddingStart="5dip"
             android:text="@string/edit_text_empty"
-            android:textColor="#FFFF"
+            android:textColor="#FFF"
             android:textIsSelectable="false" >
 
             <requestFocus />
         </EditText>
 
         <ImageButton
-            android:layout_width="60dip"
-            android:layout_height="60dip"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@null"
             android:onClick="showSpecialButtons"
-            android:src="@drawable/ic_keyboard"
-            android:background="@color/secondary_color"
-           android:scaleType="centerInside"
-            />
+            android:scaleType="centerInside"
+            android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
     </LinearLayout>
 
     <TableLayout
         android:id="@+id/SpecialButtons"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color"
         android:visibility="visible" >
 
         <TableRow
@@ -52,10 +55,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial11"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_up" >
             </ImageButton>
@@ -63,10 +66,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial12"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_down" >
             </ImageButton>
@@ -74,10 +77,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial13"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_menu" >
             </ImageButton>
@@ -85,10 +88,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial14"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_esc" >
             </ImageButton>
@@ -96,10 +99,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial15"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_cut" >
             </ImageButton>
@@ -107,10 +110,11 @@
             <ImageButton
                 android:id="@+id/buttonspecial16"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
+                android:longClickable="true"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_copy" >
             </ImageButton>
@@ -124,10 +128,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial21"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_tab" >
             </ImageButton>
@@ -135,10 +139,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial22"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_left" >
             </ImageButton>
@@ -146,10 +150,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial23"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_right" >
             </ImageButton>
@@ -157,10 +161,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial24"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_logo" >
             </ImageButton>
@@ -168,10 +172,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial25"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_paste" >
             </ImageButton>
@@ -179,10 +183,10 @@
             <ImageButton
                 android:id="@+id/buttonspecial26"
                 android:layout_width="0dp"
-                android:layout_height="30dip"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/btn_theme"
+                android:background="@drawable/sbtn_theme"
                 android:onClick="specialKey"
                 android:src="@drawable/ic_btn_select_all" >
             </ImageButton>
@@ -193,40 +197,31 @@
         android:id="@+id/view1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
-         />
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <info.hoang8f.widget.FButton
+        <Button
             android:id="@+id/buttonmouseleft"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dip"
             android:layout_margin="5dp"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_theme"
             android:onClick="leftClick"
-            android:text="@null"
-            android:textColor="@color/fbutton_color_green_sea"
-            fbutton:buttonColor="@color/fbutton_color_clouds"
-            fbutton:cornerRadius="5dp"
-            fbutton:shadowEnabled="true"
-            fbutton:shadowHeight="3dp" />
+            android:text="@null" />
 
-        <info.hoang8f.widget.FButton
+        <Button
             android:id="@+id/buttonmouseright"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dip"
             android:layout_margin="5dp"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_theme"
             android:onClick="rightClick"
-            android:text="@null"
-            android:textColor="@color/fbutton_color_green_sea"
-            fbutton:buttonColor="@color/fbutton_color_clouds"
-            fbutton:cornerRadius="5dp"
-            fbutton:shadowEnabled="true"
-            fbutton:shadowHeight="3dp" />
+            android:text="@null" />
     </LinearLayout>
 
 </LinearLayout>

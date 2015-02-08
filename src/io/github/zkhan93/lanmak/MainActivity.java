@@ -1,12 +1,14 @@
-package io.github.zkhan93.remotekeyboardandmouse;
+package io.github.zkhan93.lanmak;
+
+import io.github.zkhan93.lanmak.utility.Constants;
 
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +20,7 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 	MainFragment mf;
 	static int x1, y1, x2, y2;
 	int dx, dy;
@@ -46,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 	//	toolbar =(Toolbar)findViewById(R.id.toolbar);
 	//	 setSupportActionBar(toolbar);
 	//	 toolbar.setTitle(R.string.app_name);
-		 
+		
 	}
 
 	@Override
@@ -241,8 +243,7 @@ public class MainActivity extends ActionBarActivity {
 			// reconnect server
 		}
 	}
-
-	public void showSpecialButtons(View view) {
+	public void toggleSpecialButtons(){
 		if (specialButtons != null) {
 			if (sbutton_visible)
 				specialButtons.setVisibility(View.GONE);
@@ -250,6 +251,9 @@ public class MainActivity extends ActionBarActivity {
 				specialButtons.setVisibility(View.VISIBLE);
 			sbutton_visible = !sbutton_visible;
 		}
+	}
+	public void showSpecialButtons(View view) {
+		toggleSpecialButtons();
 	}
 
 	public void leftClick(View view) {
@@ -305,6 +309,7 @@ public class MainActivity extends ActionBarActivity {
 			put.println(Constants.ZERO + Constants.COLON + Constants.ONE
 					+ Constants.COLON + scode);
 		}
+		toggleSpecialButtons();
 	}
 
 	public static class SetNw extends AsyncTask<String, Void, Boolean> {
@@ -346,4 +351,6 @@ public class MainActivity extends ActionBarActivity {
 			super.onPostExecute(result);
 		}
 	}
+	
+	
 }

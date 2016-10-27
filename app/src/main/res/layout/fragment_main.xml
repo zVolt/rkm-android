@@ -21,8 +21,8 @@
             android:inputType="text|textNoSuggestions|textMultiLine"
             android:maxLines="2"
             android:paddingLeft="5dip"
-            android:paddingStart="5dip"
-            android:text="@string/edit_text_empty"
+            android:paddingStart="5dip" android:text="@string/edit_text_empty"
+            android:hint="@string/msg_type_here"
             android:textColor="#FFF"
             android:textIsSelectable="false">
 
@@ -30,12 +30,13 @@
         </EditText>
 
         <ImageButton
+            style="@android:style/Widget.Holo.Button.Borderless.Small"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="@null"
             android:onClick="showSpecialButtons"
             android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_more"/>
+            android:src="@drawable/ic_arrow_drop_down_grey_50_24dp"/>
     </LinearLayout>
 
     <TableLayout

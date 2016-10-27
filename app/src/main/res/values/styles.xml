@@ -1,9 +1,9 @@
 <resources>
 
-    <style name="AppBaseTheme" parent="AppTheme"></style>
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar"></style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActionBar">false</item>
     </style>
 

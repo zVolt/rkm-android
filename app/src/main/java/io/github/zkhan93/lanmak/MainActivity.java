@@ -1,10 +1,11 @@
 package io.github.zkhan93.lanmak;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,36 +23,32 @@ import io.github.zkhan93.lanmak.utility.Constants;
 
 public class MainActivity extends Activity {
     public static final String TAG = MainActivity.class.getSimpleName();
-    
-    MainFragment mf;
-    static int x1, y1, x2, y2;
-    int dx, dy;
-    long stime, dtime;
+
     static Socket s;
     static PrintWriter put;
     static boolean connected;
-    boolean click, scroll, click_hold, move, moved, clicked, prevent_jump,
-            hold_active; // actions
-    int drag_threshold = 1, hold_threshold = 120;
-    VelocityTracker vtracker;
+    static int x1, y1, x2, y2;
 
     TableLayout specialButtons;
+    Fragment fragment;
+
+    int dx, dy;
+    long stime, dtime;
+    boolean click, scroll, click_hold, move, moved, clicked, prevent_jump, hold_active;
+    int drag_threshold = 1, hold_threshold = 120;
+
+    VelocityTracker vtracker;
     boolean sbutton_visible;
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (mf == null) {
-            mf = new MainFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container, mf)
-                    .commit();
-        }
-        //	toolbar =(Toolbar)findViewById(R.id.toolbar);
-        //	 setSupportActionBar(toolbar);
-        //	 toolbar.setTitle(R.string.app_name);
-
+        fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
+        if (fragment == null)
+            fragment = new MainFragment();
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
+                .commit();
     }
 
     @Override
@@ -68,6 +65,7 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -28,8 +28,11 @@ import io.github.zkhan93.lanmak.utility.Constants;
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener, OutputStreamHandler {
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    private Socket socket;
-    private PrintWriter out;
+    /**
+     * static because we cannot recreate it on every onCrete onResume cycle of activity
+     */
+    private static Socket socket;
+    private static PrintWriter out;
     static boolean CONNECTED;
     static int x1, y1, x2, y2;
 
@@ -248,10 +251,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     void sendMove(int x, int y, float vx, float vy) {
         try {
-            if (out != null)
+            if (out != null) {
                 out.println(Constants.ONE + Constants.COLON + Constants.ZERO
                         + Constants.COLON + x + Constants.COLON + y
                         + Constants.COLON + vx + Constants.COLON + vy);
+                System.out.println(Constants.ONE + Constants.COLON + Constants.ZERO
+                        + Constants.COLON + x + Constants.COLON + y
+                        + Constants.COLON + vx + Constants.COLON + vy);
+            } else {
+                System.out.println("out is null");
+            }
         } catch (Exception e) {
             // reconnect server
         }
@@ -259,9 +268,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     void sendScroll(boolean up) {
         try {
-            if (out != null)
+            if (out != null) {
                 out.println(Constants.ONE + Constants.COLON + Constants.ONE
                         + Constants.COLON + String.valueOf(up ? 4 : 5));
+                System.out.println(Constants.ONE + Constants.COLON + Constants.ONE
+                        + Constants.COLON + String.valueOf(up ? 4 : 5));
+            } else {
+                System.out.println("out is null");
+            }
         } catch (Exception e) {
             // reconnect server
         }
@@ -269,9 +283,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     void sendClick(int button) {
         try {
-            if (out != null)
+            if (out != null) {
                 out.println(Constants.ONE + Constants.COLON + Constants.ONE
                         + Constants.COLON + String.valueOf(button));
+                System.out.println(Constants.ONE + Constants.COLON + Constants.ONE
+                        + Constants.COLON + String.valueOf(button));
+            } else {
+                System.out.println("out is null");
+            }
         } catch (Exception e) {
             // reconnect server
         }
@@ -356,16 +375,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
         }
         this.socket = socket;
-        this.out = new PrintWriter(this.socket.getOutputStream(), true);
+        out = new PrintWriter(socket.getOutputStream(), true);
     }
 
     @Override
     public void send(String command) {
         try {
-            if (out != null)
+            if (out != null) {
                 out.println(command);
-            else
+                System.out.println(command);
+            } else {
+                System.out.println("out is null");
                 MainActivity.CONNECTED = false;
+            }
         } catch (Exception e) {
             // reconnect server
         }

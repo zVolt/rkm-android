@@ -1,21 +1,27 @@
 package io.github.zkhan93.lanmak;
 
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import io.github.zkhan93.lanmak.utility.Util;
+
+import static io.github.zkhan93.lanmak.utility.Util.isIPv4Address;
+import static io.github.zkhan93.lanmak.utility.Util.isValidPort;
+
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -28,7 +34,7 @@ import android.view.MenuItem;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -38,8 +44,27 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
-
-            if (preference instanceof ListPreference) {
+            String summary = "";
+            if (preference.getKey().equals("server_ip")) {
+                summary = preference.getContext().getString(R.string.pref_summary_server_ip);
+                if (Util.isIPv4Address(stringValue))
+                    summary = stringValue + "\n" + summary;
+                else {
+                    Toast.makeText(preference.getContext(), "Invalid IP address", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            } else if (preference.getKey().equals("port")) {
+                summary = preference.getContext().getString(R.string.pref_summary_port);
+                if (Util.isValidPort(stringValue))
+                    summary = stringValue + "\n" + summary;
+                else {
+                    Toast.makeText(preference.getContext(), "Invalid port", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            preference.setSummary(summary);
+            return true;
+            /*if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
@@ -51,37 +76,39 @@ public class SettingsActivity extends PreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
             }
-//             else if (preference instanceof RingtonePreference) {
-//                // For ringtone preferences, look up the correct display value
-//                // using RingtoneManager.
-//                if (TextUtils.isEmpty(stringValue)) {
-//                    // Empty values correspond to 'silent' (no ringtone).
-//                    preference.setSummary(R.string.pref_ringtone_silent);
-//
-//                } else {
-//                    Ringtone ringtone = RingtoneManager.getRingtone(
-//                            preference.getContext(), Uri.parse(stringValue));
-//
-//                    if (ringtone == null) {
-//                        // Clear the summary if there was a lookup error.
-//                        preference.setSummary(null);
-//                    } else {
-//                        // Set the summary to reflect the new ringtone display
-//                        // name.
-//                        String name = ringtone.getTitle(preference.getContext());
-//                        preference.setSummary(name);
-//                    }
-//                }
-//
-//            }
+             else if (preference instanceof RingtonePreference) {
+                // For ringtone preferences, look up the correct display value
+                // using RingtoneManager.
+                if (TextUtils.isEmpty(stringValue)) {
+                    // Empty values correspond to 'silent' (no ringtone).
+                    preference.setSummary(R.string.pref_ringtone_silent);
+
+                } else {
+                    Ringtone ringtone = RingtoneManager.getRingtone(
+                            preference.getContext(), Uri.parse(stringValue));
+
+                    if (ringtone == null) {
+                        // Clear the summary if there was a lookup error.
+                        preference.setSummary(null);
+                    } else {
+                        // Set the summary to reflect the new ringtone display
+                        // name.
+                        String name = ringtone.getTitle(preference.getContext());
+                        preference.setSummary(name);
+                    }
+                }
+
+            }
             else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
-            }
-            return true;
+            }*/
         }
     };
+
+
+
     /**
      * Binds a preference's summary to its value. More specifically, when the
      * preference's value is changed, its summary (line of text below the
@@ -106,47 +133,29 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null) {
-            Fragment fragment = getFragmentManager().findFragmentByTag(GeneralPreferenceFragment.TAG);
+            android.app.Fragment fragment = getFragmentManager().findFragmentByTag(GeneralPreferenceFragment.TAG);
             if (fragment == null)
                 fragment = new GeneralPreferenceFragment();
-            getFragmentManager().beginTransaction().replace(android.R.id.content, fragment, GeneralPreferenceFragment.TAG)
+            getFragmentManager().beginTransaction().replace(R.id.container, fragment, GeneralPreferenceFragment.TAG)
                     .commit();
 
-        }
-        setupActionBar();
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if (!super.onMenuItemSelected(featureId, item)) {
-                NavUtils.navigateUpFromSameTask(this);
-            }
+            startActivity(new Intent(this, MainActivity.class));
             return true;
         }
-        return super.onMenuItemSelected(featureId, item);
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -160,24 +169,12 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
-            setHasOptionsMenu(true);
-
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("server_ip"));
             bindPreferenceSummaryToValue(findPreference("port"));
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
         }
     }
 

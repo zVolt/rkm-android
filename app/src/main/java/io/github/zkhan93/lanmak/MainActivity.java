@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,18 +17,20 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
 import java.net.Socket;
 
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener, OutputStreamHandler {
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    static Socket s;
-    static PrintWriter put;
-    static boolean connected;
+    private Socket socket;
+    private PrintWriter out;
+    static boolean CONNECTED;
     static int x1, y1, x2, y2;
 
     TableLayout specialButtons;
@@ -44,11 +48,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
-        if (fragment == null)
-            fragment = new MainFragment();
-        getFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
-                .commit();
+        if (savedInstanceState == null) {
+            fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
+            if (fragment == null)
+                fragment = new MainFragment();
+            getFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
+                    .commit();
+        }
     }
 
     @Override
@@ -63,12 +69,43 @@ public class MainActivity extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("server_ip")) {
+            //TODO: close the connection and reconnect it
+        } else if (key.equals("port")) {
+            //TODO: close the connection and restart it
+        }
+        Log.d(TAG, "reestablishing connection");
+        new SetNetwork(getApplicationContext(), this, PreferenceManager
+                .getDefaultSharedPreferences
+                        (getApplicationContext())
+                .getString("server_ip", Constants.SERVER_IP), PreferenceManager
+                .getDefaultSharedPreferences
+                        (getApplicationContext())
+                .getString("port", String.valueOf(Constants.PORT))).execute();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -211,8 +248,8 @@ public class MainActivity extends Activity {
      */
     void sendMove(int x, int y, float vx, float vy) {
         try {
-            if (put != null)
-                put.println(Constants.ONE + Constants.COLON + Constants.ZERO
+            if (out != null)
+                out.println(Constants.ONE + Constants.COLON + Constants.ZERO
                         + Constants.COLON + x + Constants.COLON + y
                         + Constants.COLON + vx + Constants.COLON + vy);
         } catch (Exception e) {
@@ -222,8 +259,8 @@ public class MainActivity extends Activity {
 
     void sendScroll(boolean up) {
         try {
-            if (put != null)
-                put.println(Constants.ONE + Constants.COLON + Constants.ONE
+            if (out != null)
+                out.println(Constants.ONE + Constants.COLON + Constants.ONE
                         + Constants.COLON + String.valueOf(up ? 4 : 5));
         } catch (Exception e) {
             // reconnect server
@@ -232,8 +269,8 @@ public class MainActivity extends Activity {
 
     void sendClick(int button) {
         try {
-            if (put != null)
-                put.println(Constants.ONE + Constants.COLON + Constants.ONE
+            if (out != null)
+                out.println(Constants.ONE + Constants.COLON + Constants.ONE
                         + Constants.COLON + String.valueOf(button));
         } catch (Exception e) {
             // reconnect server
@@ -303,29 +340,69 @@ public class MainActivity extends Activity {
                 break;
 
         }
-        if (put != null) {
-            put.println(Constants.ZERO + Constants.COLON + Constants.ONE
+        if (out != null) {
+            out.println(Constants.ZERO + Constants.COLON + Constants.ONE
                     + Constants.COLON + scode);
         }
         toggleSpecialButtons();
     }
 
-    public static class SetNw extends AsyncTask<String, Void, Boolean> {
-        Context cont;
+    @Override
+    public void setSocket(Socket socket) throws IOException {
+        try {
+            if (this.socket != null && this.socket.isConnected())
+                this.socket.close();
+        } catch (IOException ex) {
+            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
+        }
+        this.socket = socket;
+        this.out = new PrintWriter(this.socket.getOutputStream(), true);
+    }
 
-        public SetNw(Context con) {
-            cont = con;
+    @Override
+    public void send(String command) {
+        try {
+            if (out != null)
+                out.println(command);
+            else
+                MainActivity.CONNECTED = false;
+        } catch (Exception e) {
+            // reconnect server
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (this.socket != null && this.socket.isConnected())
+                this.socket.close();
+        } catch (IOException ex) {
+            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
+        }
+        if (out != null)
+            out.close();
+    }
+
+    public static class SetNetwork extends AsyncTask<Void, Void, Boolean> {
+        WeakReference<Context> contextRef;
+        WeakReference<OutputStreamHandler> outputStreamHandlerRef;
+        private String ip;
+        private int port;
+
+        public SetNetwork(Context context, OutputStreamHandler outputStreamHandler, String ip, String port) {
+            contextRef = new WeakReference<>(context);
+            outputStreamHandlerRef = new WeakReference<>(outputStreamHandler);
+            this.ip = ip;
+            this.port = Integer.parseInt(port);
         }
 
         @Override
-        protected Boolean doInBackground(String... ip) {
+        protected Boolean doInBackground(Void... args) {
             try {
 
-                if (ip != null && ip[0] != null) {
-                    MainActivity.s = new Socket(ip[0], Constants.PORT);
-                    MainActivity.put = new PrintWriter(
-                            MainActivity.s.getOutputStream(), true);
-                    connected = true;
+                if (ip != null && !ip.isEmpty()) {
+                    outputStreamHandlerRef.get().setSocket(new Socket(ip, port));
+                    CONNECTED = true;
                     return true;
                 } else {
                     return false;
@@ -339,11 +416,11 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                Toast.makeText(cont, cont.getString(R.string.sever_connected),
+                Toast.makeText(contextRef.get(), contextRef.get().getString(R.string.sever_connected),
                         Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(cont,
-                        cont.getString(R.string.sever_not_connected),
+                Toast.makeText(contextRef.get(),
+                        contextRef.get().getString(R.string.sever_not_connected),
                         Toast.LENGTH_SHORT).show();
             }
             super.onPostExecute(result);

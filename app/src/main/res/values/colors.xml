@@ -5,4 +5,5 @@
     <color name="primary_color">#F44336</color>
     <color name="primary_dark_color">#D32F2F</color>
     <color name="primary_darker_color">#B71C1C</color>
+    <color name="accent">#FF9100</color>
 </resources>

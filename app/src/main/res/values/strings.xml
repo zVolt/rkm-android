@@ -25,5 +25,10 @@
 
     <string name="pref_title_server_ip">Server IP Address</string>
     <string name="pref_title_port">Port Number</string>
+    <string name="pref_title_general_settings">Server</string>
+    <string name="pref_summary_server_ip">IP Address of the server, this must be private IP address assigned to your
+        desktop</string>
+    <string name="pref_summary_port">Port number on which the service is running. You can get this from desktop
+        application</string>
 
 </resources>

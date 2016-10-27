@@ -1,8 +1,9 @@
 package io.github.zkhan93.lanmak;
 
 import android.app.Fragment;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -12,7 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
-import io.github.zkhan93.lanmak.MainActivity.SetNw;
+import io.github.zkhan93.lanmak.MainActivity.SetNetwork;
 import io.github.zkhan93.lanmak.utility.Constants;
 import io.github.zkhan93.lanmak.utility.MyTextWatcher;
 import io.github.zkhan93.lanmak.utility.SpecialButtons;
@@ -22,6 +23,7 @@ public class MainFragment extends Fragment implements MyTextWatcherClblk {
 
     private EditText edt;
     static boolean setup = false;
+    private OutputStreamHandler outputStreamHandler;
 
     public MainFragment() {
 
@@ -32,13 +34,15 @@ public class MainFragment extends Fragment implements MyTextWatcherClblk {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container,
                 false);
+        edt = (EditText) rootView.findViewById(R.id.editText);
+        edt.addTextChangedListener(new MyTextWatcher(this));
         return rootView;
     }
 
     @Override
     public void onStart() {
-        edt = (EditText) getActivity().findViewById(R.id.editText);
-        edt.addTextChangedListener(new MyTextWatcher(this));
+        super.onStart();
+        outputStreamHandler = (OutputStreamHandler) getActivity();
         if (((MainActivity) getActivity()).specialButtons == null)
             ((MainActivity) getActivity()).specialButtons = (TableLayout) getActivity()
                     .findViewById(R.id.SpecialButtons);
@@ -47,29 +51,22 @@ public class MainFragment extends Fragment implements MyTextWatcherClblk {
                 .setVisibility(((MainActivity) getActivity()).sbutton_visible ? View.VISIBLE
                         : View.GONE);
         if (!setup) {
-            new SetNw(getActivity()).execute(getActivity()
-                    .getSharedPreferences(getString(R.string.pref_file_name),
-                            Context.MODE_PRIVATE).getString(
-                            getString(R.string.pref_server_ip),
-                            Constants.SERVER_IP));
+            SharedPreferences spf = PreferenceManager
+                    .getDefaultSharedPreferences
+                            (getActivity().getApplicationContext());
+            new SetNetwork(getActivity().getApplicationContext(), (OutputStreamHandler) getActivity(), spf
+                    .getString("server_ip", Constants.SERVER_IP), spf
+                    .getString("port", String.valueOf(Constants.PORT)));
             setup = true;
         }
         setLongPressInfo();
-        super.onStart();
+
     }
 
     @Override
     public void sendKey(String cmd) {
-        try {
-
-            if (MainActivity.put != null)
-                MainActivity.put.println(Constants.ZERO + Constants.COLON
-                        + Constants.ZERO + Constants.COLON + cmd);
-            else
-                MainActivity.connected = false;
-        } catch (Exception e) {
-            // reconnect server
-        }
+        outputStreamHandler.send(Constants.ZERO + Constants.COLON
+                + Constants.ZERO + Constants.COLON + cmd);
     }
 
     public void setLongPressInfo() {

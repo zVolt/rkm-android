@@ -2,12 +2,12 @@ package io.github.zkhan93.lanmak;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,26 +15,17 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.TableLayout;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.ref.WeakReference;
-import java.net.Socket;
 
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
-public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener, OutputStreamHandler {
+public class MainActivity extends Activity implements MyTextWatcherClblk{
     public static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * static because we cannot recreate it on every onCrete onResume cycle of activity
      */
-    private static Socket socket;
-    private static PrintWriter out;
-    static boolean CONNECTED;
-    static int x1, y1, x2, y2;
+    int x1, y1, x2, y2;
 
     TableLayout specialButtons;
     Fragment fragment;
@@ -46,6 +37,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     VelocityTracker vtracker;
     boolean sbutton_visible;
+
+    private ServiceConnection serviceConnection;
+    private SocketConnectionService socketConnectionService;
+    private boolean bound;
+
+    {
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                SocketConnectionService.LocalBinder localBinder = (SocketConnectionService.LocalBinder) service;
+                socketConnectionService = localBinder.getService();
+                bound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+            }
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,33 +93,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("server_ip")) {
-            //TODO: close the connection and reconnect it
-        } else if (key.equals("port")) {
-            //TODO: close the connection and restart it
-        }
-        Log.d(TAG, "reestablishing connection");
-        new SetNetwork(getApplicationContext(), this, PreferenceManager
-                .getDefaultSharedPreferences
-                        (getApplicationContext())
-                .getString("server_ip", Constants.SERVER_IP), PreferenceManager
-                .getDefaultSharedPreferences
-                        (getApplicationContext())
-                .getString("port", String.valueOf(Constants.PORT))).execute();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).unregisterOnSharedPreferenceChangeListener(this);
-        super.onDestroy();
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
+        Intent intent = new Intent(this, SocketConnectionService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (bound) {
+            unbindService(serviceConnection);
+            bound = false;
+        }
     }
 
     @Override
@@ -188,10 +186,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
                 if (scroll) {
                     if (Math.abs(dy) > 3)
-                        sendScroll(dy > 0);
+                        socketConnectionService.sendScroll(dy > 0);
                 } else if (click_hold) {
                     if (!clicked) {
-                        sendClick(6);
+                        socketConnectionService.sendClick(6);
                         clicked = true;
                         Log.d(TAG, "holding");
                     }
@@ -199,7 +197,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
                 if (move) {
                     if (!prevent_jump)
-                        sendMove(dx, dy, vtracker.getXVelocity(),
+                        socketConnectionService.sendMove(dx, dy, vtracker.getXVelocity(),
                                 vtracker.getYVelocity());
                     if (prevent_jump)
                         prevent_jump = false;
@@ -218,11 +216,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (event.getPointerCount() == 1 && !moved) {
                     if (dtime < hold_threshold) {
                         // Log.d(TAG, "Action was click");
-                        sendClick(1);
+                        socketConnectionService.sendClick(1);
                         Log.d(TAG, "click");
                     } else {
                         if (clicked) {
-                            sendClick(7);
+                            socketConnectionService.sendClick(7);
                             Log.d(TAG, "hold done");
                             clicked = false;
                         }
@@ -243,59 +241,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-    /**
-     * @param x  - pixels to move in X-Direction
-     * @param y  - pixels to move in Y-Direction
-     * @param vx - velocity in X-direction
-     * @param vy - velocity in Y-direction
-     */
-    void sendMove(int x, int y, float vx, float vy) {
-        try {
-            if (out != null) {
-                out.println(Constants.ONE + Constants.COLON + Constants.ZERO
-                        + Constants.COLON + x + Constants.COLON + y
-                        + Constants.COLON + vx + Constants.COLON + vy);
-                System.out.println(Constants.ONE + Constants.COLON + Constants.ZERO
-                        + Constants.COLON + x + Constants.COLON + y
-                        + Constants.COLON + vx + Constants.COLON + vy);
-            } else {
-                System.out.println("out is null");
-            }
-        } catch (Exception e) {
-            // reconnect server
-        }
-    }
-
-    void sendScroll(boolean up) {
-        try {
-            if (out != null) {
-                out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                        + Constants.COLON + String.valueOf(up ? 4 : 5));
-                System.out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                        + Constants.COLON + String.valueOf(up ? 4 : 5));
-            } else {
-                System.out.println("out is null");
-            }
-        } catch (Exception e) {
-            // reconnect server
-        }
-    }
-
-    void sendClick(int button) {
-        try {
-            if (out != null) {
-                out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                        + Constants.COLON + String.valueOf(button));
-                System.out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                        + Constants.COLON + String.valueOf(button));
-            } else {
-                System.out.println("out is null");
-            }
-        } catch (Exception e) {
-            // reconnect server
-        }
-    }
-
     public void toggleSpecialButtons() {
         if (specialButtons != null) {
             if (sbutton_visible)
@@ -311,11 +256,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void leftClick(View view) {
-        sendClick(1);
+        socketConnectionService.sendClick(1);
     }
 
     public void rightClick(View view) {
-        sendClick(3);
+        socketConnectionService.sendClick(3);
     }
 
     public void specialKey(View view) {
@@ -359,95 +304,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
 
         }
-        if (out != null) {
-            out.println(Constants.ZERO + Constants.COLON + Constants.ONE
-                    + Constants.COLON + scode);
-        }
-        toggleSpecialButtons();
+        socketConnectionService.sendSpecialKey(scode);
     }
 
     @Override
-    public void setSocket(Socket socket) throws IOException {
-        try {
-            if (this.socket != null && this.socket.isConnected())
-                this.socket.close();
-        } catch (IOException ex) {
-            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
-        }
-        this.socket = socket;
-        out = new PrintWriter(socket.getOutputStream(), true);
+    public void sendKey(String cmd) {
+        socketConnectionService.send(Constants.ZERO + Constants.COLON
+                + Constants.ZERO + Constants.COLON + cmd);
     }
-
-    @Override
-    public void send(String command) {
-        try {
-            if (out != null) {
-                out.println(command);
-                System.out.println(command);
-            } else {
-                System.out.println("out is null");
-                MainActivity.CONNECTED = false;
-            }
-        } catch (Exception e) {
-            // reconnect server
-        }
-    }
-
-    @Override
-    public void close() {
-        try {
-            if (this.socket != null && this.socket.isConnected())
-                this.socket.close();
-        } catch (IOException ex) {
-            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
-        }
-        if (out != null)
-            out.close();
-    }
-
-    public static class SetNetwork extends AsyncTask<Void, Void, Boolean> {
-        WeakReference<Context> contextRef;
-        WeakReference<OutputStreamHandler> outputStreamHandlerRef;
-        private String ip;
-        private int port;
-
-        public SetNetwork(Context context, OutputStreamHandler outputStreamHandler, String ip, String port) {
-            contextRef = new WeakReference<>(context);
-            outputStreamHandlerRef = new WeakReference<>(outputStreamHandler);
-            this.ip = ip;
-            this.port = Integer.parseInt(port);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... args) {
-            try {
-
-                if (ip != null && !ip.isEmpty()) {
-                    outputStreamHandlerRef.get().setSocket(new Socket(ip, port));
-                    CONNECTED = true;
-                    return true;
-                } else {
-                    return false;
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                Toast.makeText(contextRef.get(), contextRef.get().getString(R.string.sever_connected),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(contextRef.get(),
-                        contextRef.get().getString(R.string.sever_not_connected),
-                        Toast.LENGTH_SHORT).show();
-            }
-            super.onPostExecute(result);
-        }
-    }
-
-
 }

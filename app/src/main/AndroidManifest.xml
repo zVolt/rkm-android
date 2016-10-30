@@ -33,6 +33,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.zkhan93.lanmak.MainActivity"/>
         </activity>
+
+        <service
+            android:name=".SocketConnectionService"
+            android:exported="false"/>
     </application>
 
 </manifest>

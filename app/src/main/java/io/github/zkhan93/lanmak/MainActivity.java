@@ -9,26 +9,18 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.widget.TableLayout;
 
+import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
-public class MainActivity extends Activity implements MyTextWatcherClblk{
+public class MainActivity extends Activity implements MyTextWatcherClblk {
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    /**
-     * static because we cannot recreate it on every onCrete onResume cycle of activity
-     */
     int x1, y1, x2, y2;
-
-    TableLayout specialButtons;
-    Fragment fragment;
 
     int dx, dy;
     long stime, dtime;
@@ -36,7 +28,6 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
     int drag_threshold = 1, hold_threshold = 120;
 
     VelocityTracker vtracker;
-    boolean sbutton_visible;
 
     private ServiceConnection serviceConnection;
     private SocketConnectionService socketConnectionService;
@@ -49,6 +40,11 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
                 SocketConnectionService.LocalBinder localBinder = (SocketConnectionService.LocalBinder) service;
                 socketConnectionService = localBinder.getService();
                 bound = true;
+                //TODO: update fragment about the state
+                Fragment fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
+                if (fragment != null && fragment instanceof MainFragment)
+                    ((MainFragment) fragment).updateConnectionStatus
+                            (socketConnectionService.getServiceState());
             }
 
             @Override
@@ -62,33 +58,14 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Fragment fragment;
         if (savedInstanceState == null) {
             fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
             if (fragment == null)
                 fragment = new MainFragment();
             getFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
                     .commit();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            startService(new Intent(this, SocketConnectionService.class));
         }
     }
 
@@ -96,7 +73,6 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this, SocketConnectionService.class);
-        startService(intent);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -241,20 +217,6 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
         }
     }
 
-    public void toggleSpecialButtons() {
-        if (specialButtons != null) {
-            if (sbutton_visible)
-                specialButtons.setVisibility(View.GONE);
-            else
-                specialButtons.setVisibility(View.VISIBLE);
-            sbutton_visible = !sbutton_visible;
-        }
-    }
-
-    public void showSpecialButtons(View view) {
-        toggleSpecialButtons();
-    }
-
     public void leftClick(View view) {
         socketConnectionService.sendClick(1);
     }
@@ -308,8 +270,14 @@ public class MainActivity extends Activity implements MyTextWatcherClblk{
     }
 
     @Override
-    public void sendKey(String cmd) {
+    public void sendKeyboardKeys(String cmd) {
         socketConnectionService.send(Constants.ZERO + Constants.COLON
                 + Constants.ZERO + Constants.COLON + cmd);
+    }
+
+    public void reconnect() {
+        if (socketConnectionService == null)
+            return;
+        socketConnectionService.reconnect();
     }
 }

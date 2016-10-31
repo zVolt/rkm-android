@@ -4,15 +4,17 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
-import io.github.zkhan93.lanmak.MyTextWatcherClblk;
+import java.lang.ref.WeakReference;
+
+import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 
 public class MyTextWatcher implements TextWatcher {
-    MyTextWatcherClblk myTextWatcherClblk;
+    WeakReference<MyTextWatcherClblk> myTextWatcherClblkRef;
     private int ch;
     public static final String TAG = MyTextWatcher.class.getSimpleName();
 
     public MyTextWatcher(MyTextWatcherClblk myTextWatcherClblk) {
-        this.myTextWatcherClblk = myTextWatcherClblk;
+        this.myTextWatcherClblkRef = new WeakReference<>(myTextWatcherClblk);
     }
 
     @Override
@@ -31,14 +33,14 @@ public class MyTextWatcher implements TextWatcher {
                 // delete pressed
                 s.append(Constants.UNDERSCORE);
                 ch = 8;
-                myTextWatcherClblk.sendKey(String.valueOf(ch)); // yes we are on main thread :P
+                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are on main thread :P
                 break;
             case 2:
                 // a key pressed
                 ch = (int) s.charAt(1);
-                Log.d(TAG, ch + "," + (char) ch);
+//                Log.d(TAG, ch + "," + (char) ch);
                 s.replace(1, s.length(), "", 0, 0);
-                myTextWatcherClblk.sendKey(String.valueOf(ch)); // yes we are on main thread :P
+                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are on main thread :P
                 break;
             case 1:
                 break;

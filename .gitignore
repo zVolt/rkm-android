@@ -1,3 +1,11 @@
 bin/
 gen/
 doc/
+.idea/
+build/
+.gradle/
+*.iml
+local.properties
+gradle/
+gradlew
+gradlew.bat

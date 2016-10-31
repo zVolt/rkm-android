@@ -6,37 +6,86 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
-        <EditText
-            android:id="@+id/editText"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_margin="5dip"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
-            android:cursorVisible="false"
-            android:ems="10"
-            android:focusable="true"
-            android:inputType="text|textNoSuggestions|textMultiLine"
-            android:maxLines="2"
+            android:paddingEnd="5dip"
             android:paddingLeft="5dip"
-            android:paddingStart="5dip" android:text="@string/edit_text_empty"
-            android:hint="@string/msg_type_here"
-            android:textColor="#FFF"
-            android:textIsSelectable="false">
+            android:paddingRight="5dip"
+            android:paddingStart="5dip">
 
-            <requestFocus/>
-        </EditText>
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dip"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:ems="10"
+                android:focusable="true"
+                android:hint="@string/msg_type_here"
+                android:inputType="text|textNoSuggestions|textMultiLine"
+                android:maxLines="2"
+                android:text="@string/edit_text_empty"
+                android:textColor="#FFF"
+                android:textIsSelectable="false">
+
+                <requestFocus/>
+            </android.support.design.widget.TextInputEditText>
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleSmallInverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageButton
+                android:id="@+id/retry"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_retry_grey_50_24dp"
+                android:visibility="gone"/>
+        </LinearLayout>
 
         <ImageButton
+            android:id="@+id/special_panel_toggle"
             style="@android:style/Widget.Holo.Button.Borderless.Small"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:onClick="showSpecialButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="centerInside"
             android:src="@drawable/ic_arrow_drop_down_grey_50_24dp"/>
+
+        <ImageButton
+            android:id="@+id/scan"
+            style="@android:style/Widget.Holo.Button.Borderless.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_camera_grey_50_24dp"/>
+
+        <ImageButton
+            android:id="@+id/settings"
+            style="@android:style/Widget.Holo.Button.Borderless.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_settings_grey_50_24dp"/>
     </LinearLayout>
 
     <TableLayout
@@ -53,69 +102,73 @@
 
             <ImageButton
                 android:id="@+id/buttonspecial11"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_up">
+                android:src="@drawable/ic_keyboard_arrow_up_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial12"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_down">
+                android:src="@drawable/ic_keyboard_arrow_down_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial13"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_menu">
+                android:src="@drawable/ic_list_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial14"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_esc">
+                android:src="@drawable/ic_close_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial15"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_cut">
+                android:src="@drawable/ic_content_cut_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial16"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:longClickable="true"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_copy">
+                android:src="@drawable/ic_content_copy_grey_50_24dp">
             </ImageButton>
         </TableRow>
 
@@ -126,68 +179,74 @@
 
             <ImageButton
                 android:id="@+id/buttonspecial21"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_tab">
+                android:src="@drawable/ic_keyboard_tab_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial22"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_left">
+                android:src="@drawable/ic_keyboard_arrow_left_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial23"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_right">
+                android:src="@drawable/ic_keyboard_arrow_right_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial24"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_logo">
+                android:src="@drawable/ic_apps_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial25"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_paste">
+                android:src="@drawable/ic_content_paste_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
                 android:id="@+id/buttonspecial26"
+                style="@android:style/Widget.Holo.Button.Borderless.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+
                 android:layout_weight="0.25"
-                android:background="@drawable/sbtn_theme"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="specialKey"
-                android:src="@drawable/ic_btn_select_all">
+                android:src="@drawable/ic_select_all_grey_50_24dp">
             </ImageButton>
         </TableRow>
     </TableLayout>
@@ -204,6 +263,7 @@
 
         <Button
             android:id="@+id/buttonmouseleft"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="0dp"
             android:layout_height="50dip"
             android:layout_margin="5dp"
@@ -214,6 +274,7 @@
 
         <Button
             android:id="@+id/buttonmouseright"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="0dp"
             android:layout_height="50dip"
             android:layout_margin="5dp"

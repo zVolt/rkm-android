@@ -1,5 +1,8 @@
 package io.github.zkhan93.lanmak.utility;
 
+import android.content.Context;
+import android.os.Build;
+
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -10,6 +13,8 @@ import java.net.UnknownHostException;
  */
 
 public class Util {
+    public static String TAG = Util.class.getSimpleName();
+
     public static Boolean isIPv4Address(String address) {
         if (address.isEmpty()) {
             return false;
@@ -33,6 +38,27 @@ public class Util {
                 return false;
         } catch (NumberFormatException ex) {
             return false;
+        }
+    }
+
+
+    public static int getCameraId(Context context) {
+        int cameraId = -1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//            CameraManager cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+//            String[] cameraIds = cameraManager.getCameraIdList();
+//
+//            for (String id : cameraIds) {
+//
+//                if (info.facing == camera2.CameraInfo.CAMERA_FACING_BACK) {
+//                    cameraId = i;
+//                    break;
+//                }
+//            }
+            return cameraId;
+
+        } else {
+            return cameraId;
         }
     }
 }

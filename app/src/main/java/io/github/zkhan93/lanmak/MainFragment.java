@@ -2,7 +2,9 @@ package io.github.zkhan93.lanmak;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
-import com.google.zxing.Result;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -23,15 +23,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
+import io.github.zkhan93.lanmak.events.CodeReadEvents;
 import io.github.zkhan93.lanmak.events.SocketEvents;
 import io.github.zkhan93.lanmak.utility.Constants;
 import io.github.zkhan93.lanmak.utility.MyTextWatcher;
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import io.github.zkhan93.lanmak.utility.Util;
 
 import static android.view.View.GONE;
 
 
-public class MainFragment extends Fragment implements View.OnClickListener, OnLongClickListener, ZXingScannerView.ResultHandler {
+public class MainFragment extends Fragment implements View.OnClickListener, OnLongClickListener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -74,7 +75,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     @BindView(R.id.buttonspecial26)
     ImageButton b26;
 
-    private ZXingScannerView zXingScannerView;
     boolean isSpecialBtnPanelVisible, isProgressVisible, isRetryVisible;
 
     public MainFragment() {
@@ -112,7 +112,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         retry.setOnClickListener(this);
         settings.setOnClickListener(this);
         scan.setOnClickListener(this);
-        zXingScannerView = new ZXingScannerView(getActivity().getApplicationContext());
+        EventBus.getDefault().register(this);
         return rootView;
     }
 
@@ -125,27 +125,28 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-        zXingScannerView.setResultHandler(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "unregistered");
         EventBus.getDefault().unregister(this);
-        zXingScannerView.stopCamera();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SocketEvents event) {
         updateConnectionStatus(event.getSocketState());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onMessageEvent(CodeReadEvents event) {
+        String[] segs = event.getText().split(":");
+        Log.d(TAG, segs.toString());
+        SharedPreferences.Editor spfEditor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext
+                ()).edit();
+        if (Util.isIPv4Address(segs[0].trim()))
+            spfEditor.putString("server_ip", segs[0]);
+        if (Util.isValidPort(segs[1]))
+            spfEditor.putString("port", segs[1]);
+        spfEditor.commit();
     }
 
     @Override
@@ -161,7 +162,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                 startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.scan:
-                zXingScannerView.startCamera();
+                startActivity(new Intent(getActivity(), ScanActivity.class));
                 break;
             default:
                 Log.d(TAG, "click not implemented");
@@ -223,12 +224,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                 Log.d(TAG, "long click not implemented");
                 return false;
         }
-    }
-
-    @Override
-    public void handleResult(Result result) {
-        Log.d(TAG, result.getText()); // Prints scan results
-        Log.d(TAG, result.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
     }
 
     /**

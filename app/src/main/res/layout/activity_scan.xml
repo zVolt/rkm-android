@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dm7.barcodescanner.zxing.ZXingScannerView
+    android:id="@+id/zXingScannerView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.zkhan93.lanmak.ScanActivity">
+
+</me.dm7.barcodescanner.zxing.ZXingScannerView>

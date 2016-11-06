@@ -1,7 +1,7 @@
 package io.github.zkhan93.lanmak;
 
 
-import android.content.Intent;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -9,18 +9,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import io.github.zkhan93.lanmak.utility.Util;
-
-import static io.github.zkhan93.lanmak.utility.Util.isIPv4Address;
-import static io.github.zkhan93.lanmak.utility.Util.isValidPort;
 
 
 /**
@@ -139,23 +130,13 @@ public class SettingsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null) {
-            android.app.Fragment fragment = getFragmentManager().findFragmentByTag(GeneralPreferenceFragment.TAG);
+            Fragment fragment = getFragmentManager().findFragmentByTag(GeneralPreferenceFragment.TAG);
             if (fragment == null)
                 fragment = new GeneralPreferenceFragment();
             getFragmentManager().beginTransaction().replace(R.id.container, fragment, GeneralPreferenceFragment.TAG)
                     .commit();
 
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(this, MainActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**

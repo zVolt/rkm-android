@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">LAN Mouse and Keyboard</string>
+    <string name="title_search">Servers</string>
     <string name="pref_file_name">io.github.zkhan93.remotekeyboardandmouse.preferencefile</string>
     <string name="pref_server_ip">server_ip</string>
     <string name="action_settings">Settings</string>

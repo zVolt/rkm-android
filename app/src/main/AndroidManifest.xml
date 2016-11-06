@@ -17,29 +17,39 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:parentActivityName=".SearchActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.zkhan93.lanmak.SearchActivity"/>
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppToolbarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.zkhan93.lanmak.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_search"
+            android:theme="@style/AppToolbarTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/SettingTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.zkhan93.lanmak.MainActivity"/>
+        <activity android:name=".ScanActivity">
         </activity>
 
         <service
             android:name=".SocketConnectionService"
             android:exported="false"/>
-
-        <activity android:name=".ScanActivity">
-        </activity>
     </application>
 
 </manifest>

@@ -1,13 +1,13 @@
 package io.github.zkhan93.lanmak;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -17,7 +17,7 @@ import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
-public class MainActivity extends Activity implements MyTextWatcherClblk {
+public class MainActivity extends AppCompatActivity implements MyTextWatcherClblk {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     int x1, y1, x2, y2;
@@ -41,7 +41,7 @@ public class MainActivity extends Activity implements MyTextWatcherClblk {
                 socketConnectionService = localBinder.getService();
                 bound = true;
                 //TODO: update fragment about the state
-                Fragment fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
                 if (fragment != null && fragment instanceof MainFragment)
                     ((MainFragment) fragment).updateConnectionStatus
                             (socketConnectionService.getServiceState());
@@ -60,10 +60,10 @@ public class MainActivity extends Activity implements MyTextWatcherClblk {
         setContentView(R.layout.activity_main);
         Fragment fragment;
         if (savedInstanceState == null) {
-            fragment = getFragmentManager().findFragmentByTag(MainFragment.TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
             if (fragment == null)
                 fragment = new MainFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
                     .commit();
             startService(new Intent(this, SocketConnectionService.class));
         }

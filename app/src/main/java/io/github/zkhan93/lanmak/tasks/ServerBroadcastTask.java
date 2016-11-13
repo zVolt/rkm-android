@@ -1,6 +1,7 @@
 package io.github.zkhan93.lanmak.tasks;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.net.DatagramPacket;
@@ -8,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
@@ -18,17 +20,22 @@ import java.util.Enumeration;
 public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
     public static String TAG = ServerBroadcastTask.class.getSimpleName();
     private DatagramSocket datagramSocket;
+    private byte[] sendData = "DISCOVER_RKMS_REQUEST".getBytes();
 
-    public ServerBroadcastTask(DatagramSocket datagramSocket) {
-        this.datagramSocket = datagramSocket;
+    public ServerBroadcastTask(@NonNull DatagramSocket socket) {
+        datagramSocket = socket;
+        try {
+            datagramSocket.setBroadcast(true);
+        } catch (SocketException ex) {
+            Log.d(TAG, "" + ex.getLocalizedMessage());
+        }
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            this.datagramSocket.setBroadcast(true);
-            byte[] sendData = "DISCOVER_RKMS_REQUEST".getBytes();
-
+            InetAddress broadcast = InetAddress.getByName("255.255.255.255");
+            send(broadcast);
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = interfaces.nextElement();
@@ -36,22 +43,33 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
                     continue;
                 }
                 for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-                    InetAddress broadcast = interfaceAddress.getBroadcast();
+                    broadcast = interfaceAddress.getBroadcast();
                     if (broadcast == null)
                         continue;
                     try {
-                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, 6835);
-                        datagramSocket.send(sendPacket);
+                        send(broadcast);
+                        Log.d(TAG, "Interface: " + networkInterface.getDisplayName());
                     } catch (Exception ex) {
                         Log.d(TAG, "unable to send packet on broadcast address" + ex.getLocalizedMessage());
                     }
-                    Log.d(TAG, "Request packet sent to: " + broadcast.getHostAddress() + "; " +
-                            "Interface: " + networkInterface.getDisplayName());
                 }
             }
         } catch (Exception ex) {
             Log.d(TAG, "error " + ex.getLocalizedMessage());
         }
         return null;
+    }
+
+    private void send(InetAddress address) {
+
+        if (address == null)
+            return;
+        try {
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, 2222);//on
+            datagramSocket.send(sendPacket);
+            Log.d(TAG, "Request packet sent to: " + sendPacket.getAddress() + ":" + sendPacket.getPort());
+        } catch (Exception ex) {
+            Log.d(TAG, "unable to send packet on broadcast address" + ex.getLocalizedMessage());
+        }
     }
 }

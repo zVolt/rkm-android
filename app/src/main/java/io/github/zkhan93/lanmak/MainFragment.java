@@ -48,8 +48,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     ProgressBar progress;
     @BindView(R.id.retry)
     ImageButton retry;
-    @BindView(R.id.scan)
-    ImageButton scan;
     @BindView(R.id.buttonspecial11)
     ImageButton b11;
     @BindView(R.id.buttonspecial12)
@@ -111,7 +109,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         b26.setOnLongClickListener(this);
         retry.setOnClickListener(this);
         settings.setOnClickListener(this);
-        scan.setOnClickListener(this);
         EventBus.getDefault().register(this);
         return rootView;
     }
@@ -136,19 +133,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         updateConnectionStatus(event.getSocketState());
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onMessageEvent(CodeReadEvents event) {
-        String[] segs = event.getText().split(":");
-        Log.d(TAG, segs.toString());
-        SharedPreferences.Editor spfEditor = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext
-                ()).edit();
-        if (Util.isIPv4Address(segs[0].trim()))
-            spfEditor.putString("server_ip", segs[0]);
-        if (Util.isValidPort(segs[1]))
-            spfEditor.putString("port", segs[1]);
-        spfEditor.commit();
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -160,9 +144,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                 break;
             case R.id.settings:
                 startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
-                break;
-            case R.id.scan:
-                startActivity(new Intent(getActivity(), ScanActivity.class));
                 break;
             default:
                 Log.d(TAG, "click not implemented");

@@ -34,8 +34,7 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            InetAddress broadcast = InetAddress.getByName("255.255.255.255");
-            send(broadcast);
+            InetAddress broadcast;
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = interfaces.nextElement();
@@ -46,12 +45,7 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
                     broadcast = interfaceAddress.getBroadcast();
                     if (broadcast == null)
                         continue;
-                    try {
-                        send(broadcast);
-                        Log.d(TAG, "Interface: " + networkInterface.getDisplayName());
-                    } catch (Exception ex) {
-                        Log.d(TAG, "unable to send packet on broadcast address" + ex.getLocalizedMessage());
-                    }
+                    send(broadcast);
                 }
             }
         } catch (Exception ex) {
@@ -61,7 +55,6 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void send(InetAddress address) {
-
         if (address == null)
             return;
         try {

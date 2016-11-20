@@ -6,10 +6,10 @@ import io.github.zkhan93.lanmak.models.Host;
  * Created by Zeeshan Khan on 11/8/2016.
  */
 
-public class HostEvents {
+public class HostFoundEvents {
     private Host host;
 
-    public HostEvents(Host host) {
+    public HostFoundEvents(Host host) {
         this.host = host;
     }
 

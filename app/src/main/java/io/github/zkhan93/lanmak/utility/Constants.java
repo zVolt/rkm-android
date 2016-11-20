@@ -38,4 +38,9 @@ public interface Constants {
         int CONNECTING = 1;
         int DISCONNECTED = 2;
     }
+
+    interface STATES {
+        int SEARCHING = 0;
+        int FINISHED = 1;
+    }
 }

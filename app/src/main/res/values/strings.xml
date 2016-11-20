@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">LAN Mouse and Keyboard</string>
+    <string name="app_name">Remote Keyboard &amp; Mouse</string>
     <string name="title_search">Servers</string>
     <string name="pref_file_name">io.github.zkhan93.remotekeyboardandmouse.preferencefile</string>
     <string name="pref_server_ip">server_ip</string>
     <string name="action_settings">Settings</string>
+    <string name="action_scan">Scan</string>
 
     <string name="mouse_click_left">Left</string>
     <string name="mouse_click_middle"> </string>
@@ -31,5 +32,10 @@
         desktop</string>
     <string name="pref_summary_port">Port number on which the service is running. You can get this from desktop
         application</string>
+
+    <string name="msg_try_again">Try Again</string>
+    <string name="msg_search_again">Search Again</string>
+    <string name="msg_no_servers_found">No servers found</string>
+    <string name="msg_searching_for_hosts">Searching for hosts..</string>
 
 </resources>

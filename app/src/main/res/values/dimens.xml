@@ -14,4 +14,7 @@
     <dimen name="fbutton_default_padding_bottom">5dp</dimen>
     <dimen name="fbutton_default_shadow_height">4dp</dimen>
 
+    <dimen name="low_padding">4dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="high_padding">16dp</dimen>
 </resources>

@@ -10,6 +10,7 @@ import android.os.Parcelable;
 public class Host implements Parcelable {
     private String name;
     private String ip;
+    private int port;
 
     public Host() {
     }
@@ -22,6 +23,14 @@ public class Host implements Parcelable {
     public Host(Parcel parcel) {
         name = parcel.readString();
         ip = parcel.readString();
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getName() {
@@ -45,6 +54,7 @@ public class Host implements Parcelable {
         return "Host{" +
                 "name='" + name + '\'' +
                 ", ip='" + ip + '\'' +
+                ", port=" + port +
                 '}';
     }
 

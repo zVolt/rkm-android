@@ -1,6 +1,7 @@
 package io.github.zkhan93.lanmak.models.viewholders;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,6 +18,9 @@ import io.github.zkhan93.lanmak.models.Host;
  */
 
 public class HostVH extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public static final String TAG = HostVH.class.getSimpleName();
+
     @BindView(R.id.name)
     TextView name;
     @BindView(R.id.ip)

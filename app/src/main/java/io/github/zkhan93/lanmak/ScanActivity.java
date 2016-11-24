@@ -1,5 +1,6 @@
 package io.github.zkhan93.lanmak;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -74,6 +75,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                 if (Util.isValidPort(String.valueOf(host.getPort())))
                     spfEditor.putString("port", String.valueOf(host.getPort()));
                 spfEditor.commit();
+                startActivity(new Intent(this,MainActivity.class));
                 finish();
             } catch (JsonSyntaxException ex) {
                 Log.d(TAG, "" + ex.getLocalizedMessage());

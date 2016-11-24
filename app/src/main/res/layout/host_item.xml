@@ -10,15 +10,15 @@
     android:background="?selectableItemBackground"
     android:clickable="true"
     android:elevation="4dp"
+    android:foreground="?android:selectableItemBackground"
+    android:minHeight="?listPreferredItemHeight"
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:gravity="center"
-        android:minHeight="?listPreferredItemHeight"
         android:orientation="horizontal"
         android:padding="@dimen/medium_padding">
 

@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.adapter.HostAdapter;
 import io.github.zkhan93.lanmak.events.CodeReadEvents;
+import io.github.zkhan93.lanmak.events.HostClickedEvent;
 import io.github.zkhan93.lanmak.events.HostFoundEvents;
 import io.github.zkhan93.lanmak.events.HostSearchOverEvent;
 import io.github.zkhan93.lanmak.events.HostSearchStartEvent;
@@ -82,8 +83,12 @@ public class SearchActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(HostSearchOverEvent event) {
-//        progress.setVisibility(View.GONE);
         searched = true;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(HostClickedEvent event) {
+        startActivity(new Intent(this,MainActivity.class));
     }
 
     @Override

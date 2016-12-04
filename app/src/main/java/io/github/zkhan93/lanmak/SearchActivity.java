@@ -1,7 +1,6 @@
 package io.github.zkhan93.lanmak;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,14 +26,11 @@ import java.net.SocketException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.adapter.HostAdapter;
-import io.github.zkhan93.lanmak.events.CodeReadEvents;
 import io.github.zkhan93.lanmak.events.HostClickedEvent;
-import io.github.zkhan93.lanmak.events.HostFoundEvents;
 import io.github.zkhan93.lanmak.events.HostSearchOverEvent;
 import io.github.zkhan93.lanmak.events.HostSearchStartEvent;
 import io.github.zkhan93.lanmak.tasks.ServerBroadcastReceiverTask;
 import io.github.zkhan93.lanmak.tasks.ServerBroadcastTask;
-import io.github.zkhan93.lanmak.utility.Util;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -88,7 +83,11 @@ public class SearchActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(HostClickedEvent event) {
-        startActivity(new Intent(this,MainActivity.class));
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                .putString("server_ip", event.getHost().getIp())
+                .putString("port", String.valueOf(event.getHost().getPort()))
+                .apply();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override

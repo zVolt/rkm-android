@@ -6,6 +6,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 

@@ -101,6 +101,7 @@ public class SearchActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_scan:
                 startActivity(new Intent(this, ScanActivity.class));
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

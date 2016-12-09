@@ -9,6 +9,7 @@
         <item name="colorPrimaryDark">@color/primary_color</item>
         <item name="colorAccent">@color/primary_color</item>
         <item name="colorControlActivated">@color/accent</item>
+        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppBaseTheme">

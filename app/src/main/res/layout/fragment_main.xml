@@ -1,97 +1,105 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/primary_color"
               android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingEnd="5dip"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip"
-            android:paddingStart="5dip">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/editText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="5dip"
-                android:background="@null"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="true"
-                android:hint="@string/msg_type_here"
-                android:inputType="text|textNoSuggestions|textMultiLine"
-                android:maxLines="2"
-                android:text="@string/edit_text_empty"
-                android:textColor="#FFF"
-                android:textIsSelectable="false">
-
-                <requestFocus/>
-            </android.support.design.widget.TextInputEditText>
-        </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleSmallInverse"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"/>
+                >
 
-            <ImageButton
-                android:id="@+id/retry"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_retry_grey_50_24dp"
-                android:visibility="gone"
-                android:contentDescription=""/>
-        </LinearLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-        <ImageButton
-            android:id="@+id/special_panel_toggle"
-            style="@android:style/Widget.Holo.Button.Borderless.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_arrow_drop_down_grey_50_24dp"
-            android:contentDescription=""/>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dip"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:ems="10"
+                        android:focusable="true"
+                        android:hint="@string/msg_type_here"
+                        android:inputType="text|textNoSuggestions|textMultiLine"
+                        android:maxLines="2"
+                        android:text="@string/edit_text_empty"
+                        android:textColor="#FFF"
+                        android:textIsSelectable="false">
 
-        <ImageButton
-            android:id="@+id/scan"
-            style="@android:style/Widget.Holo.Button.Borderless.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_camera_grey_50_24dp"
-            tools:ignore="ContentDescription"/>
+                        <requestFocus/>
+                    </android.support.design.widget.TextInputEditText>
+                </android.support.design.widget.TextInputLayout>
 
-        <ImageButton
-            android:id="@+id/settings"
-            style="@android:style/Widget.Holo.Button.Borderless.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_settings_grey_50_24dp"/>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        style="?android:attr/progressBarStyleSmallInverse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"/>
+
+                    <ImageButton
+                        android:id="@+id/retry"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription=""
+                        android:src="@drawable/ic_retry_grey_50_24dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!--<ImageButton-->
+                <!--android:id="@+id/special_panel_toggle"-->
+                <!--style="@android:style/Widget.Holo.Button.Borderless.Small"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:contentDescription=""-->
+                <!--android:scaleType="centerInside"-->
+                <!--android:src="@drawable/ic_arrow_drop_down_grey_50_24dp"/>-->
+
+                <!--<ImageButton-->
+                <!--android:id="@+id/scan"-->
+                <!--style="@android:style/Widget.Holo.Button.Borderless.Small"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:scaleType="centerInside"-->
+                <!--android:src="@drawable/ic_camera_grey_50_24dp"-->
+                <!--tools:ignore="ContentDescription"/>-->
+
+                <!--<ImageButton-->
+                <!--android:id="@+id/settings"-->
+                <!--style="@android:style/Widget.Holo.Button.Borderless.Small"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:scaleType="centerInside"-->
+                <!--android:src="@drawable/ic_settings_grey_50_24dp"/>-->
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <TableLayout
         android:id="@+id/SpecialButtons"
@@ -112,9 +120,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription=""
                 android:onClick="specialKey"
-                android:src="@drawable/ic_keyboard_arrow_up_grey_50_24dp"
-                android:contentDescription="">
+                android:src="@drawable/ic_keyboard_arrow_up_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
@@ -124,9 +132,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription=""
                 android:onClick="specialKey"
-                android:src="@drawable/ic_keyboard_arrow_down_grey_50_24dp"
-                android:contentDescription="">
+                android:src="@drawable/ic_keyboard_arrow_down_grey_50_24dp">
             </ImageButton>
 
             <ImageButton
@@ -137,9 +145,9 @@
 
                 android:layout_weight="0.25"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription=""
                 android:onClick="specialKey"
-                android:src="@drawable/ic_list_grey_50_24dp"
-                android:contentDescription="">
+                android:src="@drawable/ic_list_grey_50_24dp">
             </ImageButton>
 
             <ImageButton

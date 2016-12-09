@@ -2,11 +2,16 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="io.github.zkhan93.remotekeyboardandmouse.MainActivity">
-
+    <item
+        android:id="@+id/action_toggle"
+        android:icon="@drawable/ic_arrow_drop_down_grey_50_24dp"
+        android:orderInCategory="100"
+        android:title="@string/action_toggle"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_grey_50_24dp"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom"/>
-
+        app:showAsAction="never"/>
 </menu>

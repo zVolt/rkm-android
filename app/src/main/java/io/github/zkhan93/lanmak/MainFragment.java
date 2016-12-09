@@ -1,12 +1,14 @@
 package io.github.zkhan93.lanmak;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
@@ -23,11 +25,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
-import io.github.zkhan93.lanmak.events.CodeReadEvents;
 import io.github.zkhan93.lanmak.events.SocketEvents;
 import io.github.zkhan93.lanmak.utility.Constants;
 import io.github.zkhan93.lanmak.utility.MyTextWatcher;
-import io.github.zkhan93.lanmak.utility.Util;
 
 import static android.view.View.GONE;
 
@@ -36,10 +36,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
-    @BindView(R.id.special_panel_toggle)
-    ImageButton specialPanelToggleBtn;
-    @BindView(R.id.settings)
-    ImageButton settings;
     @BindView(R.id.SpecialButtons)
     TableLayout specialButtonsLayout;
     @BindView(R.id.editText)
@@ -72,7 +68,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     ImageButton b25;
     @BindView(R.id.buttonspecial26)
     ImageButton b26;
-
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     boolean isSpecialBtnPanelVisible, isProgressVisible, isRetryVisible;
 
     public MainFragment() {
@@ -94,7 +91,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         specialButtonsLayout.setVisibility(isSpecialBtnPanelVisible ? View.VISIBLE : View.GONE);
         progress.setVisibility(isProgressVisible ? View.VISIBLE : View.GONE);
         retry.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
-        specialPanelToggleBtn.setOnClickListener(this);
         b11.setOnLongClickListener(this);
         b12.setOnLongClickListener(this);
         b13.setOnLongClickListener(this);
@@ -108,8 +104,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         b25.setOnLongClickListener(this);
         b26.setOnLongClickListener(this);
         retry.setOnClickListener(this);
-        settings.setOnClickListener(this);
         EventBus.getDefault().register(this);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        setHasOptionsMenu(true);
         return rootView;
     }
 
@@ -119,6 +116,27 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         outState.putBoolean("isSpecialBtnPanelVisible", isSpecialBtnPanelVisible);
         outState.putBoolean("isProgressVisible", isProgressVisible);
         outState.putBoolean("isRetryVisible", isRetryVisible);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
+                return true;
+            case R.id.action_toggle:
+                toggleSpecialButtons();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
@@ -136,14 +154,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.special_panel_toggle:
-                toggleSpecialButtons();
-                break;
             case R.id.retry:
                 retry();
-                break;
-            case R.id.settings:
-                startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
                 break;
             default:
                 Log.d(TAG, "click not implemented");

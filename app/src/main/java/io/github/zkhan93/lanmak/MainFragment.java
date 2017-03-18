@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
+import io.github.zkhan93.lanmak.events.ActionDisconnectEvent;
 import io.github.zkhan93.lanmak.events.SocketEvents;
 import io.github.zkhan93.lanmak.utility.Constants;
 import io.github.zkhan93.lanmak.utility.MyTextWatcher;
@@ -42,8 +43,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     EditText edt;
     @BindView(R.id.progress)
     ProgressBar progress;
-    @BindView(R.id.retry)
-    ImageButton retry;
+    @BindView(R.id.error_view)
+    View errorView;
+    @BindView(R.id.main_view)
+    View mainView;
     @BindView(R.id.buttonspecial11)
     ImageButton b11;
     @BindView(R.id.buttonspecial12)
@@ -89,8 +92,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
             isRetryVisible = savedInstanceState.getBoolean("isRetryVisible");
         }
         specialButtonsLayout.setVisibility(isSpecialBtnPanelVisible ? View.VISIBLE : View.GONE);
-        progress.setVisibility(isProgressVisible ? View.VISIBLE : View.GONE);
-        retry.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
+//        progress.setVisibility(isProgressVisible ? View.VISIBLE : View.GONE);
+        errorView.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
         b11.setOnLongClickListener(this);
         b12.setOnLongClickListener(this);
         b13.setOnLongClickListener(this);
@@ -103,7 +106,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         b24.setOnLongClickListener(this);
         b25.setOnLongClickListener(this);
         b26.setOnLongClickListener(this);
-        retry.setOnClickListener(this);
+        errorView.findViewById(R.id.err_button).setOnClickListener(this);
         EventBus.getDefault().register(this);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
@@ -133,6 +136,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
             case R.id.action_toggle:
                 toggleSpecialButtons();
                 return true;
+            case R.id.action_disconnect:
+                EventBus.getDefault().post(new ActionDisconnectEvent());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -146,16 +152,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(SocketEvents event) {
-        updateConnectionStatus(event.getSocketState());
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.retry:
-                retry();
+            case R.id.err_button:
+                Intent intent = new Intent(getActivity().getApplicationContext(), SearchActivity
+                        .class);
+                intent.putExtra("auto_connect", false);
+                startActivity(intent);
+                getActivity().finish();
                 break;
             default:
                 Log.d(TAG, "click not implemented");
@@ -219,13 +225,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SocketEvents event) {
+        updateConnectionStatus(event.getSocketState());
+    }
+
     /**
      * state of service from {@link io.github.zkhan93.lanmak.utility.Constants.SERVICE_STATE}
      *
      * @param state
      */
     public void updateConnectionStatus(int state) {
-        if (progress == null || retry == null)
+        if (progress == null || errorView == null)
             return;
         switch (state) {
             case Constants.SERVICE_STATE.CONNECTED:
@@ -248,18 +259,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                 break;
         }
         progress.setVisibility(isProgressVisible ? View.VISIBLE : View.GONE);
-        retry.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
+        errorView.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
+        mainView.setVisibility(isRetryVisible || isProgressVisible ? View.GONE : View.VISIBLE);
     }
 
     public void retry() {
         if (getActivity() != null)
             ((MainActivity) getActivity()).reconnect();
-        if (progress == null || retry == null)
+        if (progress == null || errorView == null)
             return;
         progress.setVisibility(View.VISIBLE);
         isProgressVisible = true;
-        retry.setVisibility(GONE);
+        errorView.setVisibility(GONE);
         isRetryVisible = true;
+        mainView.setVisibility(isRetryVisible || isProgressVisible ? View.GONE : View.VISIBLE);
     }
 
     public void toggleSpecialButtons() {

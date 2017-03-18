@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:minHeight="?listPreferredItemHeight"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button"
-        style="@style/Base.Widget.AppCompat.Button.Small"
+    <TextView
+        android:id="@+id/message"
+        android:padding="@dimen/medium_padding"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
-        android:text="@string/msg_search_again" />
+        android:text="@string/msg_no_servers_found"
+        />
+
+    <Button
+        android:id="@+id/button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/msg_search_again"/>
 </LinearLayout>

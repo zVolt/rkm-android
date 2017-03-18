@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,6 +21,8 @@ public class RetryVH extends RecyclerView.ViewHolder implements View.OnClickList
     public static final String TAG = RetryVH.class.getSimpleName();
     @BindView(R.id.button)
     Button button;
+    @BindView(R.id.message)
+    TextView message;
 
     public RetryVH(View itemView) {
         super(itemView);
@@ -34,5 +37,9 @@ public class RetryVH extends RecyclerView.ViewHolder implements View.OnClickList
         } else {
             Log.d(TAG, "click not implemented");
         }
+    }
+
+    public void setMessage(boolean showMessage) {
+        message.setVisibility(showMessage ? View.VISIBLE : View.GONE);
     }
 }

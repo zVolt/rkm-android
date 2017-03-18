@@ -1,7 +1,6 @@
 package io.github.zkhan93.lanmak.adapter;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +52,8 @@ public class HostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HostVH)
             ((HostVH) holder).setHost(hosts.get(position));
+        if (holder instanceof RetryVH)
+            ((RetryVH) holder).setMessage(getItemCount() <= 1);
     }
 
     @Override

@@ -1,9 +1,13 @@
 package io.github.zkhan93.lanmak;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +34,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     public static final String TAG = ScanActivity.class.getSimpleName();
     @BindView(R.id.zXingScannerView)
     ZXingScannerView zXingScannerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

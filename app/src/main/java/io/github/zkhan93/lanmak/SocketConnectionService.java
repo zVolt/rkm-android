@@ -10,12 +10,15 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 import io.github.zkhan93.lanmak.callbacks.SocketConnectionClbk;
+import io.github.zkhan93.lanmak.events.ActionDisconnectEvent;
 import io.github.zkhan93.lanmak.events.SocketEvents;
 import io.github.zkhan93.lanmak.tasks.SocketConnectionTask;
 import io.github.zkhan93.lanmak.utility.Constants;
@@ -27,21 +30,16 @@ import io.github.zkhan93.lanmak.utility.Constants;
 public class SocketConnectionService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener,
         SocketConnectionClbk {
     public static final String TAG = SocketConnectionService.class.getSimpleName();
-
+    private final IBinder iBinder;
     private Socket socket;
     private PrintWriter out;
-    private final IBinder iBinder;
     private int serviceState;
+    private Thread thread;
 
     {
         serviceState = Constants.SERVICE_STATE.DISCONNECTED;
         iBinder = new LocalBinder();
-    }
-
-    public class LocalBinder extends Binder {
-        public SocketConnectionService getService() {
-            return SocketConnectionService.this;
-        }
+        thread = new Thread();
     }
 
     @Nullable
@@ -53,6 +51,7 @@ public class SocketConnectionService extends Service implements SharedPreference
     @Override
     public void onCreate() {
         super.onCreate();
+        EventBus.getDefault().register(this);
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -88,6 +87,11 @@ public class SocketConnectionService extends Service implements SharedPreference
         Log.d(TAG, "connected to server");
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ActionDisconnectEvent event) {
+        close();
+    }
+
     public void failedToConnect() {
         postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
         Log.d(TAG, "not connected to server");
@@ -99,79 +103,100 @@ public class SocketConnectionService extends Service implements SharedPreference
      * @param vx - velocity in X-direction
      * @param vy - velocity in Y-direction
      */
-    void sendMove(int x, int y, float vx, float vy) {
-        if (serviceState != Constants.SERVICE_STATE.CONNECTED)
-            return;
-        if (out != null) {
-            out.println(Constants.ONE + Constants.COLON + Constants.ZERO
-                    + Constants.COLON + x + Constants.COLON + y
-                    + Constants.COLON + vx + Constants.COLON + vy);
-            if (out.checkError())
-                postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        } else {
-            Log.d(TAG, "out is null");
-            postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        }
-
+    void sendMove(final int x, final int y, final float vx, final float vy) {
+        performOnBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serviceState != Constants.SERVICE_STATE.CONNECTED)
+                    return;
+                if (out != null) {
+                    out.println(Constants.ONE + Constants.COLON + Constants.ZERO
+                            + Constants.COLON + x + Constants.COLON + y
+                            + Constants.COLON + vx + Constants.COLON + vy);
+                    if (out.checkError())
+                        postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                } else {
+                    Log.d(TAG, "out is null");
+                    postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                }
+            }
+        });
     }
 
-    void sendScroll(boolean up) {
-        if (serviceState != Constants.SERVICE_STATE.CONNECTED)
-            return;
-        if (out != null) {
-            out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                    + Constants.COLON + String.valueOf(up ? 4 : 5));
-            if (out.checkError())
-                postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        } else {
-            Log.d(TAG, "out is null");
-            postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        }
+    void sendScroll(final boolean up) {
+        performOnBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serviceState != Constants.SERVICE_STATE.CONNECTED)
+                    return;
+                if (out != null) {
+                    out.println(Constants.ONE + Constants.COLON + Constants.ONE
+                            + Constants.COLON + String.valueOf(up ? 4 : 5));
+                    if (out.checkError())
+                        postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                } else {
+                    Log.d(TAG, "out is null");
+                    postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                }
+            }
+        });
     }
 
-    void sendClick(int button) {
-        if (serviceState != Constants.SERVICE_STATE.CONNECTED)
-            return;
-        if (out != null) {
-            out.println(Constants.ONE + Constants.COLON + Constants.ONE
-                    + Constants.COLON + String.valueOf(button));
-            if (out.checkError())
-                postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        } else {
-            Log.d(TAG, "out is null");
+    void sendClick(final int button) {
+        performOnBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serviceState != Constants.SERVICE_STATE.CONNECTED)
+                    return;
+                if (out != null) {
+                    out.println(Constants.ONE + Constants.COLON + Constants.ONE
+                            + Constants.COLON + String.valueOf(button));
+                    if (out.checkError())
+                        postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                } else {
+                    Log.d(TAG, "out is null");
 
-            postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        }
-
+                    postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                }
+            }
+        });
     }
 
-    public void send(String command) {
-        if (serviceState != Constants.SERVICE_STATE.CONNECTED)
-            return;
-        if (out != null) {
-            out.println(command);
-            if (out.checkError())
-                postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        } else {
-            Log.d(TAG, "out is null");
-            postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        }
-
+    public void send(final String command) {
+        performOnBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serviceState != Constants.SERVICE_STATE.CONNECTED)
+                    return;
+                if (out != null) {
+                    out.println(command);
+                    if (out.checkError())
+                        postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                } else {
+                    Log.d(TAG, "out is null");
+                    postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                }
+            }
+        });
     }
 
-    public void sendSpecialKey(int scode) {
-        if (serviceState != Constants.SERVICE_STATE.CONNECTED)
-            return;
-        if (out != null) {
-            out.println(Constants.ZERO + Constants.COLON + Constants.ONE
-                    + Constants.COLON + scode);
-            Log.d(TAG, "out is null");
+    public void sendSpecialKey(final int scode) {
+        performOnBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                if (serviceState != Constants.SERVICE_STATE.CONNECTED)
+                    return;
+                if (out != null) {
+                    out.println(Constants.ZERO + Constants.COLON + Constants.ONE
+                            + Constants.COLON + scode);
+                    Log.d(TAG, "out is null");
 
-        } else {
-            Log.d(TAG, "out is null");
-            postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
-        }
-
+                } else {
+                    Log.d(TAG, "out is null");
+                    postUpdateState(Constants.SERVICE_STATE.DISCONNECTED);
+                }
+            }
+        });
     }
 
     public void close() {
@@ -213,5 +238,26 @@ public class SocketConnectionService extends Service implements SharedPreference
         }
         serviceState = state;
         EventBus.getDefault().post(new SocketEvents(state));
+    }
+
+    private Thread performOnBackgroundThread(final Runnable runnable) {
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    runnable.run();
+                } finally {
+                    Log.d(TAG, "failed to run a tak");
+                }
+            }
+        };
+        t.start();
+        return t;
+    }
+
+    class LocalBinder extends Binder {
+        SocketConnectionService getService() {
+            return SocketConnectionService.this;
+        }
     }
 }

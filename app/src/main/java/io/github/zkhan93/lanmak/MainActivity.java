@@ -1,19 +1,23 @@
 package io.github.zkhan93.lanmak;
 
-import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
+import io.github.zkhan93.lanmak.events.SocketEvents;
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
@@ -29,9 +33,9 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
 
     VelocityTracker vtracker;
 
+    private boolean bound;
     private ServiceConnection serviceConnection;
     private SocketConnectionService socketConnectionService;
-    private boolean bound;
 
     {
         serviceConnection = new ServiceConnection() {
@@ -40,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
                 SocketConnectionService.LocalBinder localBinder = (SocketConnectionService.LocalBinder) service;
                 socketConnectionService = localBinder.getService();
                 bound = true;
-                //TODO: update fragment about the state
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
                 if (fragment != null && fragment instanceof MainFragment)
                     ((MainFragment) fragment).updateConnectionStatus
@@ -65,15 +68,15 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
                 fragment = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
                     .commit();
-            startService(new Intent(this, SocketConnectionService.class));
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, SocketConnectionService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        final Intent intent = new Intent(this, SocketConnectionService.class);
+        bindService(intent, serviceConnection, Context
+                .BIND_AUTO_CREATE);
     }
 
     @Override
@@ -83,6 +86,21 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
             unbindService(serviceConnection);
             bound = false;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SocketEvents event) {
+        updateConnectionStatus(event.getSocketState());
+    }
+
+    /**
+     * state of service from {@link io.github.zkhan93.lanmak.utility.Constants.SERVICE_STATE}
+     *
+     * @param state
+     */
+    public void updateConnectionStatus(int state) {
+
+
     }
 
     @Override

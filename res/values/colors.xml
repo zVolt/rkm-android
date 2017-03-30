@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="primary_lighter_color">#FFEBEE</color>
-    <color name="primary_light_color">#E57373</color>
-    <color name="primary_color">#F44336</color>
-    <color name="primary_dark_color">#D32F2F</color>
-    <color name="primary_darker_color">#B71C1C</color>
-</resources>

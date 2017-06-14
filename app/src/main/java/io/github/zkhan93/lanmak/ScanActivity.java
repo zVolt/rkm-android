@@ -1,13 +1,14 @@
 package io.github.zkhan93.lanmak;
 
-import android.content.ComponentName;
+import android.Manifest;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,17 +18,11 @@ import com.google.gson.JsonSyntaxException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.zkhan93.lanmak.events.CodeReadEvents;
 import io.github.zkhan93.lanmak.models.Host;
 import io.github.zkhan93.lanmak.utility.Util;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-import static android.R.attr.host;
 
 public class ScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
@@ -59,7 +54,19 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void onStart() {
         super.onStart();
-        zXingScannerView.startCamera();
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest
+                    .permission.CAMERA)) {
+                Log.d(TAG, "show permission request for " + Manifest.permission.CAMERA);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                        .CAMERA}, 0);
+            }
+        } else {
+            zXingScannerView.startCamera();
+        }
     }
 
     @Override
@@ -73,14 +80,15 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                     showInvalidCodeMsg();
                     return;
                 }
-                SharedPreferences.Editor spfEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext
-                        ()).edit();
+                SharedPreferences.Editor spfEditor = PreferenceManager
+                        .getDefaultSharedPreferences(this.getApplicationContext
+                                ()).edit();
                 if (Util.isIPv4Address(host.getIp()))
                     spfEditor.putString("server_ip", host.getIp());
                 if (Util.isValidPort(String.valueOf(host.getPort())))
                     spfEditor.putString("port", String.valueOf(host.getPort()));
-                spfEditor.commit();
-                startActivity(new Intent(this,MainActivity.class));
+                spfEditor.apply();
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
             } catch (JsonSyntaxException ex) {
                 Log.d(TAG, "" + ex.getLocalizedMessage());
@@ -93,7 +101,20 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void showInvalidCodeMsg() {
-        Toast.makeText(this.getApplicationContext(), "Invalid/Unexpected QR Code", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getApplicationContext(), "Invalid/Unexpected QR Code", Toast
+                .LENGTH_SHORT).show();
         zXingScannerView.resumeCameraPreview(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                zXingScannerView.startCamera();
+            else
+                finish();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

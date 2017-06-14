@@ -59,8 +59,12 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
             return;
         try {
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, 2222);//on
-            datagramSocket.send(sendPacket);
-            Log.d(TAG, "Request packet sent to: " + sendPacket.getAddress() + ":" + sendPacket.getPort());
+            if (!datagramSocket.isClosed()) {
+                datagramSocket.send(sendPacket);
+                Log.d(TAG, "Request packet sent to: " + sendPacket.getAddress() + ":" + sendPacket.getPort());
+            }else{
+                Log.d(TAG, "Request packet not sent socket is closed");
+            }
         } catch (Exception ex) {
             Log.d(TAG, "unable to send packet on broadcast address" + ex.getLocalizedMessage());
         }

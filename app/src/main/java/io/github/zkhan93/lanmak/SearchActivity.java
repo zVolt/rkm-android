@@ -178,7 +178,9 @@ public class SearchActivity extends AppCompatActivity {
 //        progress.setVisibility(View.VISIBLE);
         try {
             DatagramSocket socket = new DatagramSocket(2222);
+            //prepare to detect servers responses from LAN
             new ServerBroadcastReceiverTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            //send broadcasts to server in LAN
             new ServerBroadcastTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } catch (SocketException ex) {

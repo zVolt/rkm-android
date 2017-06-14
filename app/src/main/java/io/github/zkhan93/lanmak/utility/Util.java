@@ -1,12 +1,21 @@
 package io.github.zkhan93.lanmak.utility;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Zeeshan Khan on 10/28/2016.
@@ -45,7 +54,8 @@ public class Util {
     public static int getCameraId(Context context) {
         int cameraId = -1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-//            CameraManager cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+//            CameraManager cameraManager = (CameraManager) context.getSystemService(Context
+// .CAMERA_SERVICE);
 //            String[] cameraIds = cameraManager.getCameraIdList();
 //
 //            for (String id : cameraIds) {
@@ -61,4 +71,5 @@ public class Util {
             return cameraId;
         }
     }
+
 }

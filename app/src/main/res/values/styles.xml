@@ -7,6 +7,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 
@@ -14,11 +15,17 @@
 
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="SettingTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="SettingTheme.AppBarOverlay" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <style name="SettingTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="SettingTheme.PopupOverlay" parent="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <style name="MyActionButtonOverflow" parent="@style/Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_more_vert_white_24dp</item>
+    </style>
+
+
 </resources>

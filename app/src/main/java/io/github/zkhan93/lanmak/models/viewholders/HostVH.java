@@ -43,5 +43,6 @@ public class HostVH extends RecyclerView.ViewHolder implements View.OnClickListe
     @Override
     public void onClick(View v) {
         EventBus.getDefault().post(new HostClickedEvent(host));
+        Log.d(TAG, "host cliecked" + host.toString());
     }
 }

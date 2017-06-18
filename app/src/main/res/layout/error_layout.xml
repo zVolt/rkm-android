@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/accent"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:padding="16dp">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/ic_cloud_off_white_48dp"/>
 
     <TextView
         android:id="@+id/err_msg"
-        style="@style/TextAppearance.AppCompat.Medium"
+        style="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/msg_no_servers_found" />
+        android:gravity="center"
+        android:text="@string/msg_servers_connection_drop"
+        android:textColor="@android:color/white"/>
 
     <Button
         android:id="@+id/err_button"
-        style="@style/Widget.AppCompat.Button.Colored"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/msg_search_again" />
+        android:layout_marginTop="8dp"
+        android:background="?selectableItemBackground"
+        android:text="@string/msg_search_again"
+        />
 
 </LinearLayout>

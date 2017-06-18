@@ -117,4 +117,11 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, SearchActivity.class));
+        finish();
+        super.onBackPressed();
+    }
 }

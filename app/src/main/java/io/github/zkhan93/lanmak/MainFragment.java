@@ -3,8 +3,10 @@ package io.github.zkhan93.lanmak;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,8 +86,17 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
-
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null)
+//            ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         edt.addTextChangedListener(new MyTextWatcher((MyTextWatcherClblk) getActivity()));
+        edt.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                //TODO: implement hardware keyboard inputs
+                return false;
+            }
+        });
         if (savedInstanceState != null) {
             isSpecialBtnPanelVisible = savedInstanceState.getBoolean("isSpecialBtnPanelVisible");
             isProgressVisible = savedInstanceState.getBoolean("isProgressVisible");
@@ -131,7 +142,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity.class));
+                startActivity(new Intent(getActivity().getApplicationContext(), SettingsActivity
+                        .class));
                 return true;
             case R.id.action_toggle:
                 toggleSpecialButtons();

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,7 +61,7 @@ public class SearchActivity extends AppCompatActivity {
     private HostAdapter hostAdapter;
     private boolean searched;
 
-    private boolean bound,auto_connect;
+    private boolean bound, auto_connect;
     private ServiceConnection serviceConnection;
     private SocketConnectionService socketConnectionService;
 
@@ -68,7 +69,8 @@ public class SearchActivity extends AppCompatActivity {
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                SocketConnectionService.LocalBinder localBinder = (SocketConnectionService.LocalBinder) service;
+                SocketConnectionService.LocalBinder localBinder = (SocketConnectionService
+                        .LocalBinder) service;
                 socketConnectionService = localBinder.getService();
                 bound = true;
                 updateView(socketConnectionService.getServiceState());
@@ -96,7 +98,7 @@ public class SearchActivity extends AppCompatActivity {
             searched = savedInstanceState.getBoolean("searched");
             hostAdapter.restoreInstanceState(savedInstanceState);
         }
-        auto_connect=getIntent().getBooleanExtra("auto_connect",true);
+        auto_connect = getIntent().getBooleanExtra("auto_connect", true);
         startService(new Intent(this, SocketConnectionService.class));
     }
 
@@ -118,13 +120,14 @@ public class SearchActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(HostClickedEvent event) {
+        Log.d(TAG, "HostClickedEvent called");
         SharedPreferences spf = PreferenceManager.getDefaultSharedPreferences(getApplicationContext
                 ());
-        if (spf.getString("server_ip", "").equals(event.getHost().getIp()) && spf.getString("port", "").equals(event.getHost().getPort())) {
+        if (spf.getString("server_ip", "").equals(event.getHost().getIp()) && spf.getString
+                ("port", "").equals(String.valueOf(event.getHost().getPort()))) {
             socketConnectionService.reconnect();
             startActivity(new Intent(this, MainActivity.class));
-        }
-        else
+        } else
             PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                     .putString("server_ip", event.getHost().getIp())
                     .putString("port", String.valueOf(event.getHost().getPort()))
@@ -179,9 +182,12 @@ public class SearchActivity extends AppCompatActivity {
         try {
             DatagramSocket socket = new DatagramSocket(2222);
             //prepare to detect servers responses from LAN
-            new ServerBroadcastReceiverTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            AsyncTaskCompat.executeParallel(new ServerBroadcastReceiverTask(socket));
+//            new ServerBroadcastReceiverTask(socket).executeOnExecutor(AsyncTask
+// .THREAD_POOL_EXECUTOR);
             //send broadcasts to server in LAN
-            new ServerBroadcastTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            AsyncTaskCompat.executeParallel(new ServerBroadcastTask(socket));
+//            new ServerBroadcastTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } catch (SocketException ex) {
             Log.d(TAG, "cannot create DatagramSocket " + ex.getLocalizedMessage());
@@ -198,12 +204,12 @@ public class SearchActivity extends AppCompatActivity {
                 break;
             case Constants.SERVICE_STATE.CONNECTED:
                 //start other activity
-                if(auto_connect) {
+                if (auto_connect) {
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     finish();
-                }else{
+                } else {
                     //so that auto_connect can skip the connection for only one time
-                    auto_connect=true;
+                    auto_connect = true;
                 }
                 break;
             case Constants.SERVICE_STATE.DISCONNECTED:

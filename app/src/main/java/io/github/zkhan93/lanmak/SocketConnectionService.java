@@ -27,7 +27,8 @@ import io.github.zkhan93.lanmak.utility.Constants;
  * Created by Zeeshan Khan on 10/28/2016.
  */
 
-public class SocketConnectionService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener,
+public class SocketConnectionService extends Service implements SharedPreferences
+        .OnSharedPreferenceChangeListener,
         SocketConnectionClbk {
     public static final String TAG = SocketConnectionService.class.getSimpleName();
     private final IBinder iBinder;
@@ -52,7 +53,8 @@ public class SocketConnectionService extends Service implements SharedPreference
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -64,7 +66,8 @@ public class SocketConnectionService extends Service implements SharedPreference
 
     @Override
     public void onDestroy() {
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).unregisterOnSharedPreferenceChangeListener(this);
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
     }
 
@@ -79,7 +82,8 @@ public class SocketConnectionService extends Service implements SharedPreference
             if (this.socket != null && this.socket.isConnected())
                 this.socket.close();
         } catch (IOException ex) {
-            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
+            Log.d(TAG, "exception occured while closing previous socket: " + ex
+                    .getLocalizedMessage());
         }
         this.socket = socket;
         out = new PrintWriter(socket.getOutputStream(), true);
@@ -204,7 +208,8 @@ public class SocketConnectionService extends Service implements SharedPreference
             if (this.socket != null && this.socket.isConnected())
                 this.socket.close();
         } catch (IOException ex) {
-            Log.d(TAG, "exception occured while closing previous socket: " + ex.getLocalizedMessage());
+            Log.d(TAG, "exception occured while closing previous socket: " + ex
+                    .getLocalizedMessage());
         }
         if (out != null)
             out.close();
@@ -213,6 +218,7 @@ public class SocketConnectionService extends Service implements SharedPreference
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "shared preferences changed");
         if (key.equals("server_ip") || key.equals("port")) {
             Log.d(TAG, "re-establishing connection");
             reconnect();
@@ -220,7 +226,8 @@ public class SocketConnectionService extends Service implements SharedPreference
     }
 
     public void reconnect() {
-        SharedPreferences spf = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences spf = PreferenceManager.getDefaultSharedPreferences
+                (getApplicationContext());
         String ip = spf.getString("server_ip", Constants.SERVER_IP);
         String port = spf.getString("port", String.valueOf(Constants.PORT));
         new SocketConnectionTask(this, ip, port).execute();
@@ -231,7 +238,8 @@ public class SocketConnectionService extends Service implements SharedPreference
     }
 
     private void postUpdateState(int state) {
-        if (state != Constants.SERVICE_STATE.CONNECTED && state != Constants.SERVICE_STATE.DISCONNECTED && state != Constants
+        if (state != Constants.SERVICE_STATE.CONNECTED && state != Constants.SERVICE_STATE
+                .DISCONNECTED && state != Constants
                 .SERVICE_STATE.CONNECTING) {
             Log.d(TAG, "invalid state update");
             return;
@@ -241,16 +249,7 @@ public class SocketConnectionService extends Service implements SharedPreference
     }
 
     private Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-                    Log.d(TAG, "failed to run a tak");
-                }
-            }
-        };
+        Thread t = new Thread(runnable);
         t.start();
         return t;
     }

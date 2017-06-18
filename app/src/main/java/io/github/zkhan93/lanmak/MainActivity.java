@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                SocketConnectionService.LocalBinder localBinder = (SocketConnectionService.LocalBinder) service;
+                SocketConnectionService.LocalBinder localBinder = (SocketConnectionService
+                        .LocalBinder) service;
                 socketConnectionService = localBinder.getService();
                 bound = true;
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
@@ -66,7 +67,8 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
             fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
             if (fragment == null)
                 fragment = new MainFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MainFragment.TAG)
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment,
+                    MainFragment.TAG)
                     .commit();
         }
     }
@@ -289,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
 
     @Override
     public void sendKeyboardKeys(String cmd) {
+        Log.d(TAG, "sending:" + cmd);
         socketConnectionService.send(Constants.ZERO + Constants.COLON
                 + Constants.ZERO + Constants.COLON + cmd);
     }

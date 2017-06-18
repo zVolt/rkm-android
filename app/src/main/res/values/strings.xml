@@ -37,8 +37,9 @@
 
     <string name="msg_try_again">Try Again</string>
     <string name="msg_search_again">Search Again</string>
-    <string name="msg_no_servers_found">No servers found</string>
-    <string name="msg_searching_for_hosts">Searching for hosts..</string>
+    <string name="msg_servers_connection_drop">Connection with server has closed scan and connect to the server again!</string>
+    <string name="msg_no_servers_found">No servers found nearby! try scanning again!</string>
+    <string name="msg_searching_for_hosts">Searching for servers nearby..</string>
 
 
 </resources>

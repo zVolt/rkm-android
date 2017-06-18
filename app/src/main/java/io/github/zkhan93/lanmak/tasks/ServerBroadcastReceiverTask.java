@@ -39,12 +39,14 @@ public class ServerBroadcastReceiverTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         try {
             //receiving code
-            datagramSocket.setSoTimeout(30000);
+            datagramSocket.setSoTimeout(10000);
             byte[] recvBuf = new byte[15000];
             DatagramPacket receivePacket;
             while (true) {
                 receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
                 Log.d(TAG, "waiting for packet from server");
+                //suspending this thread for very short period of time so that it don't block UI on some phones
+                Thread.sleep(10);
                 datagramSocket.receive(receivePacket);
                 Log.d(TAG, "we have a packet");
                 try {

@@ -1,10 +1,15 @@
 package io.github.zkhan93.lanmak.utility;
 
+import android.provider.CalendarContract;
+import android.support.v4.view.KeyEventCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 
 import java.lang.ref.WeakReference;
+import java.security.KeyStore;
 
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 
@@ -33,14 +38,16 @@ public class MyTextWatcher implements TextWatcher {
                 // delete pressed
                 s.append(Constants.UNDERSCORE);
                 ch = 8;
-                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are on main thread :P
+                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are
+                // on main thread :P
                 break;
             case 2:
                 // a key pressed
-                ch = (int) s.charAt(1);
-//                Log.d(TAG, ch + "," + (char) ch);
+                ch = s.toString().charAt(1);
+                Log.d(TAG, String.format("%c : %d", ch, ch));
                 s.replace(1, s.length(), "", 0, 0);
-                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are on main thread :P
+                myTextWatcherClblkRef.get().sendKeyboardKeys(String.valueOf(ch)); // yes we are
+                // on main thread :P
                 break;
             case 1:
                 break;

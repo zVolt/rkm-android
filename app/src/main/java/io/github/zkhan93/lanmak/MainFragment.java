@@ -3,6 +3,7 @@ package io.github.zkhan93.lanmak;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,8 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.Toast;
@@ -75,6 +78,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     ImageButton b26;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.canvas)
+    ImageView canvas;
     boolean isSpecialBtnPanelVisible, isProgressVisible, isRetryVisible;
 
     public MainFragment() {
@@ -146,6 +151,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
                         .class));
                 return true;
             case R.id.action_toggle:
+                item.setIcon(ContextCompat.getDrawable(getActivity(), isSpecialBtnPanelVisible ?
+                        R.drawable.ic_arrow_drop_down_grey_50_24dp : R.drawable
+                        .ic_arrow_drop_up_grey_50_24dp));
                 toggleSpecialButtons();
                 return true;
             case R.id.action_disconnect:
@@ -154,7 +162,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     @Override

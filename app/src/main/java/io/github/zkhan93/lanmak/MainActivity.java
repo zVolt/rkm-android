@@ -4,9 +4,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,8 +22,13 @@ import android.view.View;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 import io.github.zkhan93.lanmak.events.SocketEvents;
+import io.github.zkhan93.lanmak.models.Line;
 import io.github.zkhan93.lanmak.utility.Constants;
 
 
@@ -62,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Fragment fragment;
+        Fragment fragment = null;
         if (savedInstanceState == null) {
             fragment = getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
             if (fragment == null)
@@ -70,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment,
                     MainFragment.TAG)
                     .commit();
+
         }
     }
 
@@ -79,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
         final Intent intent = new Intent(this, SocketConnectionService.class);
         bindService(intent, serviceConnection, Context
                 .BIND_AUTO_CREATE);
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag
+                (MainFragment.TAG);
     }
 
     @Override
@@ -107,14 +121,13 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        //detecting what action performed (click,drag,move etc)
         switch (event.getActionMasked()) {
             case (MotionEvent.ACTION_POINTER_DOWN):
                 scroll = true;
                 click_hold = false;
                 click = false;
                 move = false;
-
                 // Log.d(TAG, "scrolling start");
                 return true;
             case (MotionEvent.ACTION_POINTER_UP):
@@ -123,6 +136,12 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
                 click_hold = false;
                 return true;
             case (MotionEvent.ACTION_DOWN):
+                if (!setup) {
+                    MainFragment fragment = (MainFragment) getSupportFragmentManager()
+                            .findFragmentByTag(MainFragment.TAG);
+                    setBrush(fragment.canvas.getWidth(), fragment.canvas.getHeight());
+                    fragment.canvas.setImageBitmap(bitmap);
+                }
                 x1 = Math.round(event.getRawX());
                 y1 = Math.round(event.getRawY());
                 stime = System.currentTimeMillis();
@@ -199,6 +218,9 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
                         prevent_jump = false;
                 }
 
+                lines.add(new Line(x1, x2, y1, y2, 255, 24));
+                draw(); //draw it on canvas
+
                 x1 = x2;
                 y1 = y2;
                 return true;
@@ -235,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
             default:
                 return super.onTouchEvent(event);
         }
+
     }
 
     public void leftClick(View view) {
@@ -300,5 +323,44 @@ public class MainActivity extends AppCompatActivity implements MyTextWatcherClbl
         if (socketConnectionService == null)
             return;
         socketConnectionService.reconnect();
+    }
+
+    Bitmap bitmap;
+    Canvas canvas;
+    Paint paint;
+    float downx = 0, downy = 0, upx = 0, upy = 0;
+    boolean setup;
+    List<Line> lines = new ArrayList<>();
+
+    private void setBrush(int width, int height) {
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStrokeWidth(25);
+        paint.setColor(ContextCompat.getColor(this, R.color.accent));
+        setup = true;
+    }
+
+    private void draw() {
+        if (!setup)
+            return;
+        Line line;
+        Log.d(TAG, String.format("drawing %d lines", lines.size()));
+        ListIterator<Line> linesIterator = lines.listIterator();
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        while (linesIterator.hasNext()) {
+            line = linesIterator.next();
+            if (line.getAlpha() <= 0) {
+                linesIterator.remove();
+                continue;
+            }
+            paint.setAlpha(line.getAlpha());
+            paint.setStrokeWidth(line.getStroke());
+            canvas.drawLine(line.getX1(), line.getY1(), line.getX2(), line.getY2(), paint);
+            line.decStep();
+        }
+        ((MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG)).canvas
+                .setImageBitmap(bitmap);
     }
 }

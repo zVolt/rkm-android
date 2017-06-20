@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,11 +12,10 @@
     android:orientation="horizontal"
     android:padding="@dimen/medium_padding">
 
-
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:srcCompat="@drawable/ic_desktop_windows_blue_grey_700_36dp"/>
+        app:srcCompat="@drawable/ic_desktop_windows_blue_grey_700_36dp" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -32,7 +30,7 @@
             style="@style/TextAppearance.AppCompat.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="VAIO"/>
+            tools:text="VAIO" />
 
         <TextView
             android:id="@+id/ip"
@@ -40,6 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            tools:text="192.168.2.100"/>
+            tools:text="192.168.2.100" />
     </LinearLayout>
 </LinearLayout>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="16dp"
-              android:gravity="center"
-              android:minHeight="?listPreferredItemHeight"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:gravity="center"
+    android:minHeight="?listPreferredItemHeight"
+    android:orientation="vertical">
 
     <ProgressBar
         android:id="@+id/progress"
         style="?android:progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/medium_padding"/>
+        android:padding="@dimen/low_padding" />
 
     <TextView
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/msg_searching_for_hosts"/>
+        android:text="@string/msg_searching_for_hosts" />
 
 </LinearLayout>

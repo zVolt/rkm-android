@@ -12,6 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.zkhan93.lanmak.R;
 import io.github.zkhan93.lanmak.events.HostSearchStartEvent;
+import io.github.zkhan93.lanmak.events.StartScanActivityEvent;
 
 /**
  * Created by zeeshan on 11/20/2016.
@@ -23,19 +24,28 @@ public class RetryVH extends RecyclerView.ViewHolder implements View.OnClickList
     Button button;
     @BindView(R.id.message)
     TextView message;
+    @BindView(R.id.scan)
+    Button scan;
 
     public RetryVH(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         button.setOnClickListener(this);
+        scan.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.button) {
-            EventBus.getDefault().post(new HostSearchStartEvent());
-        } else {
-            Log.d(TAG, "click not implemented");
+        switch (v.getId()) {
+            case R.id.button:
+                EventBus.getDefault().post(new HostSearchStartEvent());
+
+                break;
+            case R.id.scan:
+                EventBus.getDefault().post(new StartScanActivityEvent());
+                break;
+            default:
+                Log.d(TAG, "click not implemented");
         }
     }
 

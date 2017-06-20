@@ -36,6 +36,7 @@ import io.github.zkhan93.lanmak.events.HostClickedEvent;
 import io.github.zkhan93.lanmak.events.HostSearchOverEvent;
 import io.github.zkhan93.lanmak.events.HostSearchStartEvent;
 import io.github.zkhan93.lanmak.events.SocketEvents;
+import io.github.zkhan93.lanmak.events.StartScanActivityEvent;
 import io.github.zkhan93.lanmak.tasks.ServerBroadcastReceiverTask;
 import io.github.zkhan93.lanmak.tasks.ServerBroadcastTask;
 import io.github.zkhan93.lanmak.utility.Constants;
@@ -147,12 +148,17 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_scan:
-                startActivity(new Intent(this, ScanActivity.class));
-                finish();
+                startScanQRCodeActivity(new StartScanActivityEvent());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void startScanQRCodeActivity(StartScanActivityEvent startScanActivityEvent){
+        startActivity(new Intent(this, ScanActivity.class));
+        finish();
     }
 
     @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,18 +8,18 @@
     android:gravity="center"
     android:minHeight="?listPreferredItemHeight"
     android:orientation="vertical"
-    tools:background="@color/accent"
     tools:gravity="center_horizontal"
     tools:layout_height="match_parent">
 
     <TextView
         android:id="@+id/message"
-        style="@style/TextAppearance.AppCompat.Body1"
+        style="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/medium_padding"
-        android:text="@string/msg_no_servers_found" />
+        android:text="@string/msg_no_servers_found"
+        />
 
     <Button
         android:id="@+id/button"
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/msg_search_again"
-        android:textColor="@color/primary_color" />
+        android:textColor="@color/primary_color"/>
 
     <TextView
         style="@style/TextAppearance.AppCompat.Title"
@@ -35,18 +36,20 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="30dp"
-        android:text="OR" />
+        android:text="OR"
+        />
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Body2"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Try scanning server QR code" />
+        android:text="Try scanning server QR code"
+        />
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@drawable/ic_qrcode_white_56dp" />
+        android:background="@drawable/ic_qrcode_white_56dp"/>
 
     <Button
         android:id="@+id/scan"
@@ -55,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Scan QR Code"
-        android:textColor="@color/primary_color" />
+        android:textColor="@color/primary_color"
+        />
 
 </LinearLayout>

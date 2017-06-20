@@ -78,8 +78,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     ImageButton b26;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.canvas)
-    ImageView canvas;
+//    @BindView(R.id.canvas)
+//    ImageView canvas;
     boolean isSpecialBtnPanelVisible, isProgressVisible, isRetryVisible;
 
     public MainFragment() {

@@ -128,6 +128,7 @@ public class SearchActivity extends AppCompatActivity {
                 ("port", "").equals(String.valueOf(event.getHost().getPort()))) {
             socketConnectionService.reconnect();
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         } else
             PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                     .putString("server_ip", event.getHost().getIp())
@@ -177,8 +178,9 @@ public class SearchActivity extends AppCompatActivity {
         super.onStart();
         EventBus.getDefault().register(this);
         hostAdapter.registerEvents();
-        if (!searched)
+        if (!searched) {
             startHostSearch();
+        }
         Intent intent = new Intent(this, SocketConnectionService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }

@@ -4,15 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,13 +16,8 @@ import android.view.View;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 import io.github.zkhan93.lanmak.events.SocketEvents;
-import io.github.zkhan93.lanmak.models.Line;
 import io.github.zkhan93.lanmak.utility.Constants;
 
 

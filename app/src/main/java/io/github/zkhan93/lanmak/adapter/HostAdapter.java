@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,10 +42,13 @@ public class HostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_TYPE.RETRY)
-            return new RetryVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.retry_item, parent, false));
+            return new RetryVH(LayoutInflater.from(parent.getContext()).inflate(R.layout
+                    .retry_item, parent, false));
         else if (viewType == ITEM_TYPE.SEARCH)
-            return new LoadingVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_item, parent, false));
-        return new HostVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.host_item, parent, false));
+            return new LoadingVH(LayoutInflater.from(parent.getContext()).inflate(R.layout
+                    .loading_item, parent, false));
+        return new HostVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.host_item,
+                parent, false));
     }
 
     @Override

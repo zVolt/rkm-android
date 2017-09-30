@@ -1,14 +1,17 @@
 package io.github.zkhan93.lanmak;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,6 +69,7 @@ public class SearchActivity extends AppCompatActivity {
     private boolean bound, auto_connect;
     private ServiceConnection serviceConnection;
     private SocketConnectionService socketConnectionService;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 102;
 
     {
         serviceConnection = new ServiceConnection() {
@@ -134,7 +139,6 @@ public class SearchActivity extends AppCompatActivity {
                     .putString("server_ip", event.getHost().getIp())
                     .putString("port", String.valueOf(event.getHost().getPort()))
                     .apply();
-//        startActivity(new Intent(this, MainActivity.class));
         //changing preference will trigger the service to send connection state update which will
         // be caught in this activity
     }
@@ -149,15 +153,50 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_scan:
-                startScanQRCodeActivity(new StartScanActivityEvent());
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest
+                            .permission.CAMERA))
+                        // Show an explanation to the user
+                        Toast.makeText(this, "need camera permission to scan code", Toast
+                                .LENGTH_SHORT).show();
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                            .CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+                } else
+                    startScanQRCodeActivity(new StartScanActivityEvent());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[]
+            grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startScanQRCodeActivity(new StartScanActivityEvent());
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    Log.d(TAG, "permisssion denied for camera");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void startScanQRCodeActivity(StartScanActivityEvent startScanActivityEvent){
+    public void startScanQRCodeActivity(StartScanActivityEvent startScanActivityEvent) {
         startActivity(new Intent(this, ScanActivity.class));
         finish();
     }
@@ -186,16 +225,12 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void startHostSearch() {
-//        progress.setVisibility(View.VISIBLE);
         try {
             DatagramSocket socket = new DatagramSocket(2222);
             //prepare to detect servers responses from LAN
             AsyncTaskCompat.executeParallel(new ServerBroadcastReceiverTask(socket));
-//            new ServerBroadcastReceiverTask(socket).executeOnExecutor(AsyncTask
-// .THREAD_POOL_EXECUTOR);
             //send broadcasts to server in LAN
             AsyncTaskCompat.executeParallel(new ServerBroadcastTask(socket));
-//            new ServerBroadcastTask(socket).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } catch (SocketException ex) {
             Log.d(TAG, "cannot create DatagramSocket " + ex.getLocalizedMessage());

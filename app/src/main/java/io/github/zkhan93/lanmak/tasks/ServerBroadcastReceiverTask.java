@@ -45,13 +45,15 @@ public class ServerBroadcastReceiverTask extends AsyncTask<Void, Void, Void> {
             while (true) {
                 receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
                 Log.d(TAG, "waiting for packet from server");
-                //suspending this thread for very short period of time so that it don't block UI on some phones
+                //suspending this thread for very short period of time so that it don't block UI
+                // on some phones
                 Thread.sleep(10);
                 datagramSocket.receive(receivePacket);
                 Log.d(TAG, "we have a packet");
                 try {
                     Log.d(TAG, new String(receivePacket.getData()).trim());
-                    Host host = new Gson().fromJson(new String(receivePacket.getData()).trim(), Host.class);
+                    Host host = new Gson().fromJson(new String(receivePacket.getData()).trim(),
+                            Host.class);
                     EventBus.getDefault().post(new HostFoundEvents(host));
                 } catch (Exception ex) {
                     Log.d(TAG, "some other packet " + ex.getLocalizedMessage());
@@ -70,7 +72,8 @@ public class ServerBroadcastReceiverTask extends AsyncTask<Void, Void, Void> {
         } catch (Exception ex) {
             Log.d(TAG, "exception in receving packets" + ex.getLocalizedMessage());
         } finally {
-            //assuming that ServerBroadcastReceiverTask will finish in 10 sec and all responses will be here
+            //assuming that ServerBroadcastReceiverTask will finish in 10 sec and all responses
+            // will be here
             try {
                 if (datagramSocket != null)
                     datagramSocket.close();

@@ -13,7 +13,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
- * It sends a broadcast packet({@link DatagramPacket}) to every NetworkInterface's broadcast address.
+ * It sends a broadcast packet({@link DatagramPacket}) to every NetworkInterface's broadcast
+ * address.
  * Created by Zeeshan Khan on 11/6/2016.
  */
 
@@ -58,11 +59,13 @@ public class ServerBroadcastTask extends AsyncTask<Void, Void, Void> {
         if (address == null)
             return;
         try {
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, 2222);//on
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address,
+                    2222);//on
             if (!datagramSocket.isClosed()) {
                 datagramSocket.send(sendPacket);
-                Log.d(TAG, "Request packet sent to: " + sendPacket.getAddress() + ":" + sendPacket.getPort());
-            }else{
+                Log.d(TAG, "Request packet sent to: " + sendPacket.getAddress() + ":" +
+                        sendPacket.getPort());
+            } else {
                 Log.d(TAG, "Request packet not sent socket is closed");
             }
         } catch (Exception ex) {

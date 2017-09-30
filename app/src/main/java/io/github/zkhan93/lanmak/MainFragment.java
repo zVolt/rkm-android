@@ -13,12 +13,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.Toast;
@@ -29,6 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnLongClick;
 import io.github.zkhan93.lanmak.callbacks.MyTextWatcherClblk;
 import io.github.zkhan93.lanmak.events.ActionDisconnectEvent;
 import io.github.zkhan93.lanmak.events.SocketEvents;
@@ -38,7 +36,7 @@ import io.github.zkhan93.lanmak.utility.MyTextWatcher;
 import static android.view.View.GONE;
 
 
-public class MainFragment extends Fragment implements View.OnClickListener, OnLongClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -78,8 +76,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
     ImageButton b26;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-//    @BindView(R.id.canvas)
-//    ImageView canvas;
     boolean isSpecialBtnPanelVisible, isProgressVisible, isRetryVisible;
 
     public MainFragment() {
@@ -92,8 +88,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null)
-//            ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         edt.addTextChangedListener(new MyTextWatcher((MyTextWatcherClblk) getActivity()));
         edt.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -108,20 +102,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
             isRetryVisible = savedInstanceState.getBoolean("isRetryVisible");
         }
         specialButtonsLayout.setVisibility(isSpecialBtnPanelVisible ? View.VISIBLE : View.GONE);
-//        progress.setVisibility(isProgressVisible ? View.VISIBLE : View.GONE);
         errorView.setVisibility(isRetryVisible ? View.VISIBLE : View.GONE);
-        b11.setOnLongClickListener(this);
-        b12.setOnLongClickListener(this);
-        b13.setOnLongClickListener(this);
-        b14.setOnLongClickListener(this);
-        b15.setOnLongClickListener(this);
-        b16.setOnLongClickListener(this);
-        b21.setOnLongClickListener(this);
-        b22.setOnLongClickListener(this);
-        b23.setOnLongClickListener(this);
-        b24.setOnLongClickListener(this);
-        b25.setOnLongClickListener(this);
-        b26.setOnLongClickListener(this);
         errorView.findViewById(R.id.err_button).setOnClickListener(this);
         EventBus.getDefault().register(this);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
@@ -187,7 +168,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         }
     }
 
-    @Override
+    @OnLongClick({R.id.buttonspecial11, R.id.buttonspecial12, R.id.buttonspecial13, R.id
+            .buttonspecial14, R.id.buttonspecial15, R.id.buttonspecial16,
+            R.id.buttonspecial21, R.id.buttonspecial22, R.id.buttonspecial23, R.id
+            .buttonspecial24, R.id.buttonspecial25, R.id.buttonspecial26})
     public boolean onLongClick(View v) {
         switch (v.getId()) {
             case R.id.buttonspecial11:
@@ -291,7 +275,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, OnLo
         isProgressVisible = true;
         errorView.setVisibility(GONE);
         isRetryVisible = true;
-        mainView.setVisibility(isRetryVisible || isProgressVisible ? View.GONE : View.VISIBLE);
+        mainView.setVisibility(isProgressVisible ? View.GONE : View.VISIBLE);
     }
 
     public void toggleSpecialButtons() {
